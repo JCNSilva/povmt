@@ -1,9 +1,16 @@
 package les.ufcg.edu.br.povmt.activities;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,16 +32,29 @@ import com.google.android.gms.common.api.Status;
 import com.squareup.picasso.Picasso;
 
 import les.ufcg.edu.br.povmt.R;
+import les.ufcg.edu.br.povmt.fragments.AboutFragment;
+import les.ufcg.edu.br.povmt.fragments.HistoryFragment;
+import les.ufcg.edu.br.povmt.fragments.HomeFragment;
 import les.ufcg.edu.br.povmt.utils.CircleTransform;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
+
+    public static final String HOME_TAG = "HOME_TAG";
+    private static final String HISTORY_TAG = "HISTORY_TAG";
+    private static final String ABOUT_TAG = "ABOUT_TAG";
 
     private SharedPreferences sharedPreferences;
     private TextView nameUsr;
     private ImageView imgUsr;
     private TextView emailUsr;
     private GoogleApiClient mGoogleApiClient;
+    private FragmentManager fragmentManager;
+    private int lastFragment;
+    private Fragment currentFragment;
+    private HomeFragment homeFragment;
+    private HistoryFragment historyFragment;
+    private AboutFragment aboutFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +101,23 @@ public class MainActivity extends AppCompatActivity
         imgUsr = (ImageView) headerLayout.findViewById(R.id.imgUsr);
 
         setUpViewsDrawer();
+        setUpFragments();
+    }
+
+
+    /** Method to create all fragments
+     */
+    private void setUpFragments(){
+        homeFragment = new HomeFragment();
+        historyFragment = new HistoryFragment();
+        aboutFragment = new AboutFragment();
+
+        currentFragment = homeFragment;
+
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, homeFragment, HOME_TAG);
+        fragmentTransaction.commit();
     }
 
     private void setUpViewsDrawer(){
@@ -123,11 +160,6 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -137,17 +169,60 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_week) {
-            // Handle the camera action
-        } else if (id == R.id.nav_history) {
-        } else if (id == R.id.logout) {
-            signOut();
+        fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-            Intent mainIntent = new Intent(MainActivity.this,SplashActivity.class);
-            startActivity(mainIntent);
-            finish();
+        if (id == 0) {
+            id = lastFragment;
         }
 
+        switch (id) {
+            case R.id.nav_week:
+                getSupportActionBar().setTitle(getString(R.string.app_name));
+                if (fragmentManager.findFragmentByTag(HOME_TAG) == null) {
+                    fragmentTransaction.hide(currentFragment);
+                    fragmentTransaction.add(R.id.fragment_container, homeFragment, HOME_TAG);
+                    fragmentTransaction.show(homeFragment).commit();
+                } else if (!fragmentManager.findFragmentByTag(HOME_TAG).isVisible()) {
+                    fragmentTransaction.hide(currentFragment).show(homeFragment).commit();
+                }
+                currentFragment = homeFragment;
+                lastFragment = R.id.nav_week;
+                break;
+            case R.id.nav_history:
+                getSupportActionBar().setTitle(getString(R.string.historico));
+                if (fragmentManager.findFragmentByTag(HISTORY_TAG) == null) {
+                    fragmentTransaction.hide(currentFragment);
+                    fragmentTransaction.add(R.id.fragment_container, historyFragment, HISTORY_TAG);
+                    fragmentTransaction.show(historyFragment).commit();
+                } else if (!fragmentManager.findFragmentByTag(HISTORY_TAG).isVisible()) {
+                    fragmentTransaction.hide(currentFragment).show(historyFragment).commit();
+                }
+                currentFragment = historyFragment;
+                lastFragment = R.id.nav_history;
+                break;
+            case R.id.nav_about:
+                getSupportActionBar().setTitle(getString(R.string.sobre));
+                if (fragmentManager.findFragmentByTag(ABOUT_TAG) == null) {
+                    fragmentTransaction.hide(currentFragment);
+                    fragmentTransaction.add(R.id.fragment_container, aboutFragment, ABOUT_TAG);
+                    fragmentTransaction.show(aboutFragment).commit();
+                } else if (!fragmentManager.findFragmentByTag(ABOUT_TAG).isVisible()) {
+                    fragmentTransaction.hide(currentFragment).show(aboutFragment).commit();
+                }
+                currentFragment = aboutFragment;
+                lastFragment = R.id.nav_about;
+                break;
+            case R.id.logout:
+                signOut();
+
+                Intent mainIntent = new Intent(MainActivity.this,SplashActivity.class);
+                startActivity(mainIntent);
+                finish();
+            default:
+                break;
+
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
