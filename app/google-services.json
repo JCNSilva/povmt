@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "305159962874",
+    "project_id": "povmt-1370"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:305159962874:android:dbfb663bac6f32a9",
+        "android_client_info": {
+          "package_name": "les.ufcg.edu.br.povmt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "305159962874-obrbl4t1vbeq1rijq2b6hp0epb2jk1ss.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "les.ufcg.edu.br.povmt",
+            "certificate_hash": "D9322EFDB5727B2C8DEC4C5F8EFFA19C3DE5BED6"
+          }
+        },
+        {
+          "client_id": "305159962874-evtchshpotgcd8b087t1boo9e991e3a1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAd9G24GGslXSMcRMDRz9bAd8KEqo1Cj8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

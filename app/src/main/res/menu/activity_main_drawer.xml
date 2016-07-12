@@ -1,36 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:checkableBehavior="single"
+        android:id="@+id/menu_top">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
+            android:id="@+id/nav_week"
+            android:icon="@drawable/ic_nav_week"
+            android:title="@string/semana_atual" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
+            android:id="@+id/nav_history"
+            android:icon="@drawable/ic_nav_history"
+            android:title="@string/historico" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:id="@+id/nav_about"
+            android:icon="@drawable/ic_nav_about"
+            android:title="@string/sobre" />
+
     </group>
 
-    <item android:title="">
-        <menu>
-            <item
-                android:id="@+id/login"
-                android:icon="@drawable/ic_nav_login"
-                android:title="Login" />
-            <item
-                android:id="@+id/logout"
-                android:icon="@drawable/ic_nav_logout"
-                android:title="Logout" />
-        </menu>
-    </item>
+
+    <group android:checkableBehavior="none"
+        android:id="@+id/menu_bottom">
+        <item
+            android:id="@+id/logout"
+            android:icon="@drawable/ic_nav_logout"
+            android:title="Logout" />
+
+    </group>
+
 
 </menu>

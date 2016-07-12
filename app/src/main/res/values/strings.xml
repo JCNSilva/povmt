@@ -6,4 +6,8 @@
 
     <string name="action_settings">Settings</string>
     <string name="sem_ti">Não há TI registrada</string>
+    <string name="loading">Carregando</string>
+    <string name="semana_atual">Semana Atual</string>
+    <string name="historico">Histórico</string>
+    <string name="sobre">Sobre</string>
 </resources>
