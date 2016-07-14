@@ -13,8 +13,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     //------------------ INFORMAÇÕES GERAIS -----------------------
-    public static final int VERSAO_BD = 1;
+    public static final int VERSAO_BD = 2;
     public static final String NOME_DB = "POVMTDatabase";
+
+
+
+    //-----------------------TABELA DE USUARIOS --------------------
+    public static final String USUARIO_NOME_TABELA = "tabUsuario";
+    public static final String USUARIO_ID = "_id";
+    public static final String USUARIO_NOME = "nome";
+    public static final String USUARIO_EMAIL = "email";
+    public static final String USUARIO_URL = "url";
+    public static final String SQL_USUARIO_CRIAR_TABELA = "CREATE TABLE "
+            + USUARIO_NOME_TABELA + "("
+            + USUARIO_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
+            + USUARIO_NOME + " TEXT NOT NULL, "
+            + USUARIO_EMAIL + " TEXT NOT NULL, "
+            + USUARIO_URL + " TEXT NOT NULL);";
+    public static final String SQL_USUARIO_DELETAR_TABELA = "DROP TABLE IF EXISTS "
+            + USUARIO_NOME_TABELA + ";";
 
 
 
@@ -24,12 +41,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String ATIVIDADE_NOME = "nome";
     public static final String ATIVIDADE_CATEGORIA = "categoria";
     public static final String ATIVIDADE_PRIORIDADE = "prioridade";
+    public static final String ATIVIDADE_USUARIO_FK = "usuario";
     public static final String SQL_ATIVIDADE_CRIAR_TABELA = "CREATE TABLE "
             + ATIVIDADE_NOME_TABELA + "("
             + ATIVIDADE_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
             + ATIVIDADE_NOME + " TEXT NOT NULL, "
             + ATIVIDADE_CATEGORIA + " TEXT, "
-            + ATIVIDADE_PRIORIDADE + " TEXT NOT NULL);";
+            + ATIVIDADE_PRIORIDADE + " TEXT NOT NULL, "
+            + ATIVIDADE_USUARIO_FK + " INTEGER NOT NULL, "
+            + "FOREIGN KEY (" + ATIVIDADE_USUARIO_FK + ") REFERENCES "
+            + USUARIO_NOME_TABELA + " (" + USUARIO_ID + ") "
+            + "ON DELETE CASCADE ON UPDATE CASCADE);";
     public static final String SQL_ATIVIDADE_DELETAR_TABELA = "DROP TABLE IF EXISTS "
             + ATIVIDADE_NOME_TABELA + ";";
 
@@ -68,15 +90,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String SQL_TAG_DELETAR_TABELA  = "DROP TABLE IF EXISTS "
             + TAG_NOME_TABELA + ";";
 
-
-
-    //// TODO: 13/07/2016  
-    //-----------------------TABELA DE USUARIOS --------------------
-    public static final String USUARIO_NOME_TABELA = "tabUsuario";
-    public static final String SQL_USUARIO_CRIAR_TABELA = "CREATE TABLE "
-            + USUARIO_NOME_TABELA + "("+");";
-    public static final String SQL_USUARIO_DELETAR_TABELA = "DROP TABLE IF EXISTS "
-            + USUARIO_NOME_TABELA + ";";
 
 
 
