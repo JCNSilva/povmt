@@ -33,6 +33,7 @@ import com.squareup.picasso.Picasso;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.fragments.AboutFragment;
+import les.ufcg.edu.br.povmt.fragments.CreateTIFragment;
 import les.ufcg.edu.br.povmt.fragments.HistoryFragment;
 import les.ufcg.edu.br.povmt.fragments.HomeFragment;
 import les.ufcg.edu.br.povmt.utils.CircleTransform;
@@ -79,6 +80,9 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                CreateTIFragment cdf = new CreateTIFragment();
+                cdf.show(ft, "dialog");
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }
