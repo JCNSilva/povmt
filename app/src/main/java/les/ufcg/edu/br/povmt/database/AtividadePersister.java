@@ -45,7 +45,7 @@ public class AtividadePersister {
         return getDatabase().insert(dbHelper.ATIVIDADE_NOME_TABELA, null, contentValues);
     }
 
-    public long updateAtividade(Atividade atividade, String idUser) {
+    public long atualizarAtividade(Atividade atividade, String idUser) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(dbHelper.ATIVIDADE_ID, atividade.getId());
         contentValues.put(dbHelper.ATIVIDADE_NOME, atividade.getNome());
@@ -64,10 +64,10 @@ public class AtividadePersister {
     }
 
     public List<Atividade> getAtividades(String idUser) {
-        String[] column = new String []{dbHelper.ATIVIDADE_ID, dbHelper.ATIVIDADE_NOME,
+        String[] columns = new String []{dbHelper.ATIVIDADE_ID, dbHelper.ATIVIDADE_NOME,
                 dbHelper.ATIVIDADE_CATEGORIA, dbHelper.ATIVIDADE_PRIORIDADE,
                 idUser};
-        Cursor cursor = getDatabase().query(dbHelper.ATIVIDADE_NOME_TABELA, column, null, null, null, null, null, null);
+        Cursor cursor = getDatabase().query(dbHelper.ATIVIDADE_NOME_TABELA, columns, null, null, null, null, null, null);
 
         List<Atividade> atividades = new ArrayList<>();
         while (cursor.moveToNext()) {
