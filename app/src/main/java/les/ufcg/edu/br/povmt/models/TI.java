@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class TI {
 
     private long id;
-    private LocalDate data;
+    private Calendar data;
     private int horas;
     private String urlFoto;
 
@@ -20,11 +20,11 @@ public class TI {
         this.id = id;
     }
 
-    public LocalDate getData() {
+    public Calendar getData() {
         return data;
     }
 
-    public void setData(LocalDate data) {
+    public void setData(Calendar data) {
         this.data = data;
     }
 
