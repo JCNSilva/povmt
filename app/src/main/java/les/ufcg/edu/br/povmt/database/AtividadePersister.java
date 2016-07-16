@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import les.ufcg.edu.br.povmt.models.Atividade;
+import les.ufcg.edu.br.povmt.models.Categoria;
+import les.ufcg.edu.br.povmt.models.Prioridade;
 
 /**
  * Created by Mendel on 14/07/2016.
@@ -110,11 +112,36 @@ public class AtividadePersister {
     }
 
 
+
     private Atividade createAtividade(Cursor cursor) {
         Atividade model = new Atividade(cursor.getLong(cursor.getColumnIndex(dbHelper.ATIVIDADE_ID)),
                 cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_NOME)),
-                cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_CATEGORIA)),
-                cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_PRIORIDADE)));
+                getCategoria(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_CATEGORIA))),
+                getPrioridade(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_PRIORIDADE))));
         return model;
+    }
+
+    private Prioridade getPrioridade(String strPrioridade){
+        switch(strPrioridade.toLowerCase()){
+            case "baixa":
+                return Prioridade.BAIXA;
+            case "media":
+                return Prioridade.MEDIA;
+            case "alta":
+                return Prioridade.ALTA;
+            default:
+                return Prioridade.MEDIA;
+        }
+    }
+
+    private Categoria getCategoria(String strCategoria){
+        switch(strCategoria.toLowerCase()){
+            case "trabalho":
+                return Categoria.TRABALHO;
+            case "lazer":
+                return Categoria.LAZER;
+            default:
+                return Categoria.TRABALHO;
+        }
     }
 }
