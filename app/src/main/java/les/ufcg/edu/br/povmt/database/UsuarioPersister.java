@@ -78,11 +78,11 @@ public class UsuarioPersister {
         Cursor cursor = getDatabase().query(dbHelper.USUARIO_NOME_TABELA,
                 columns, dbHelper.USUARIO_ID + " = '" + idUser + "'", null, null, null, null);
 
-        if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
-
+        cursor.moveToFirst();
+        if (cursor.getCount() == 1) {
             Usuario usuario = createUsuario(cursor);
             usuario.setAtividadeList(atividadePersister.getAtividades(idUser));
+            cursor.close();
             return usuario;
         }
 

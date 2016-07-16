@@ -13,7 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     //------------------ INFORMAÇÕES GERAIS -----------------------
-    public static final int VERSAO_BD = 2;
+    public static final int VERSAO_BD = 3;
     public static final String NOME_DB = "POVMTDatabase";
 
 
@@ -26,7 +26,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String USUARIO_URL = "url";
     public static final String SQL_USUARIO_CRIAR_TABELA = "CREATE TABLE "
             + USUARIO_NOME_TABELA + "("
-            + USUARIO_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
+            + USUARIO_ID + " INTEGER NOT NULL PRIMARY KEY, "
             + USUARIO_NOME + " TEXT NOT NULL, "
             + USUARIO_EMAIL + " TEXT NOT NULL, "
             + USUARIO_URL + " TEXT NOT NULL);";

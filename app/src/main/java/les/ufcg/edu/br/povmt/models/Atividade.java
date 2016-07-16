@@ -8,25 +8,22 @@ import java.util.List;
  */
 public class Atividade {
     private long id;
-    private long idUser;
     private String nome;
     private Categoria categoria;
     private Prioridade prioridade;
     private List<TI> tiList;
 
-    public Atividade(long id, long idUser, String nome) {
+    public Atividade(long id, String nome, Categoria categoria, Prioridade prioridade) {
         this.id = id;
-        this.idUser = idUser;
         this.nome = nome;
-        tiList = new ArrayList<>();
+        this.categoria = categoria;
+        this.prioridade = prioridade;
+        this.tiList = new ArrayList<>();
     }
 
-    public long getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(long idUser) {
-        this.idUser = idUser;
+    public Atividade(String nome, Categoria categoria, Prioridade prioridade) {
+        this(0, nome, categoria, prioridade);
+        this.tiList = new ArrayList<>();
     }
 
     public String getNome() {

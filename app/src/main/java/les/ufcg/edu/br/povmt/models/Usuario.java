@@ -1,6 +1,5 @@
 package les.ufcg.edu.br.povmt.models;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class Usuario {
         this.nome = nome;
         this.email = email;
         this.url = url;
-        atividadeList = new ArrayList<>();
+        this.atividadeList = new ArrayList<>();
     }
 
     public long getId() {
