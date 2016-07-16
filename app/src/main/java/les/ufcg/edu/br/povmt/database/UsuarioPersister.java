@@ -5,15 +5,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import les.ufcg.edu.br.povmt.models.Atividade;
 import les.ufcg.edu.br.povmt.models.Usuario;
 
 /**
- * Created by treinamento-09 on 15/07/16.
+ * Created by Mendel on 15/07/16.
  */
 public class UsuarioPersister {
     private SQLiteDatabase database;
     private final DatabaseHelper dbHelper;
     private static UsuarioPersister usuarioPersister;
+    private static AtividadePersister atividadePersister;
 
     public UsuarioPersister(Context context) {
             dbHelper = new DatabaseHelper(context);
@@ -38,7 +40,12 @@ public class UsuarioPersister {
         contentValues.put(dbHelper.USUARIO_EMAIL, usuario.getEmail());
         contentValues.put(dbHelper.USUARIO_URL, usuario.getUrl());
 
-        return getDatabase().insert(dbHelper.USUARIO_NOME_TABELA, null, contentValues);
+        long id = getDatabase().insert(dbHelper.USUARIO_NOME_TABELA, null, contentValues);
+
+        for(Atividade atividade: usuario.getAtividadeList()){
+            atividadePersister.inserirAtividade(atividade, usuario.getId());
+        }
+        return id;
     }
 
     public long atualizarUsuario(Usuario usuario) {
@@ -48,27 +55,34 @@ public class UsuarioPersister {
         contentValues.put(dbHelper.USUARIO_EMAIL, usuario.getEmail());
         contentValues.put(dbHelper.USUARIO_URL, usuario.getUrl());
 
-        return getDatabase().update(dbHelper.USUARIO_NOME_TABELA, contentValues,
+        int linhasAfetadas = getDatabase().update(dbHelper.USUARIO_NOME_TABELA, contentValues,
                 dbHelper.USUARIO_ID + " = '" + String.valueOf(usuario.getId())
                         + "'", null);
+
+        for(Atividade atividade: usuario.getAtividadeList()){
+            linhasAfetadas += atividadePersister.atualizarAtividade(atividade, usuario.getId());
+        }
+        return linhasAfetadas;
+
     }
 
-    public int deleteAtividade(String idUser) {
+    public int deletarUsuario(long idUser) {
         return getDatabase().delete(dbHelper.USUARIO_NOME_TABELA, dbHelper.USUARIO_ID +
                 " = '" + idUser + "'", null);
     }
 
-    public Usuario getUsuario() {
+    public Usuario recuperarUsuario(long idUser) {
         String[] columns = new String []{dbHelper.USUARIO_ID, dbHelper.USUARIO_NOME,
                 dbHelper.USUARIO_EMAIL, dbHelper.USUARIO_URL};
 
         Cursor cursor = getDatabase().query(dbHelper.USUARIO_NOME_TABELA,
-                columns, null, null, null, null, null);
-
-        cursor.moveToFirst();
+                columns, dbHelper.USUARIO_ID + " = '" + idUser + "'", null, null, null, null);
 
         if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+
             Usuario usuario = createUsuario(cursor);
+            usuario.setAtividadeList(atividadePersister.getAtividades(idUser));
             return usuario;
         }
 
