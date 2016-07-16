@@ -8,9 +8,17 @@ import java.util.Calendar;
 public class TI {
 
     private long id;
+    private long idAtividade;
     private Calendar data;
     private int horas;
     private String urlFoto;
+
+    public TI(long id, long idAtividade, int horas, String urlFoto) {
+        this.id = id;
+        this.idAtividade = idAtividade;
+        this.horas = horas;
+        this.urlFoto = urlFoto;
+    }
 
     public long getId() {
         return id;
@@ -18,6 +26,14 @@ public class TI {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getIdAtividade() {
+        return idAtividade;
+    }
+
+    public void setIdAtividade(long idAtividade) {
+        this.idAtividade = idAtividade;
     }
 
     public Calendar getData() {

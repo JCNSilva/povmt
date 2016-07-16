@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import les.ufcg.edu.br.povmt.models.Atividade;
+import les.ufcg.edu.br.povmt.models.TI;
 
 /**
  * Created by Notebook on 14/07/2016.
@@ -33,7 +34,7 @@ public class AtividadePersister {
         return atividadePersister;
     }
 
-    public long inserirAtividade(Atividade atividade, String idUser) {
+    public long inserirAtividade(Atividade atividade, long idUser) {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(dbHelper.ATIVIDADE_NOME, atividade.getNome());
@@ -45,7 +46,19 @@ public class AtividadePersister {
         return getDatabase().insert(dbHelper.ATIVIDADE_NOME_TABELA, null, contentValues);
     }
 
-    public long atualizarAtividade(Atividade atividade, String idUser) {
+    public long inserirTI(TI ti, long idAtividade) {
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(dbHelper.TI_ATIVIDADE_FK, idAtividade);
+        contentValues.put(dbHelper.TI_DATA, ti.getData().toString());
+        contentValues.put(dbHelper.TI_HORAS, ti.getHoras());
+        contentValues.put(dbHelper.TI_FOTO, ti.getUrlFoto());
+        contentValues.put(dbHelper.TI_ID, ti.getId());
+
+        return getDatabase().insert(dbHelper.TI_NOME_TABELA, null, contentValues);
+    }
+
+    public long atualizarAtividade(Atividade atividade, long idUser) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(dbHelper.ATIVIDADE_ID, atividade.getId());
         contentValues.put(dbHelper.ATIVIDADE_NOME, atividade.getNome());
@@ -58,16 +71,40 @@ public class AtividadePersister {
                         + "'", null);
     }
 
-    public int deleteAtividade(String idUser, String nomeAtividade) {
+    public int deleteAtividade(long idUser, String nomeAtividade) {
         return getDatabase().delete(dbHelper.ATIVIDADE_NOME_TABELA, dbHelper.USUARIO_ID +
                 " = '" + idUser + "' AND " + dbHelper.ATIVIDADE_NOME + " = '" + nomeAtividade + "'", null);
     }
 
-    public List<Atividade> getAtividades(String idUser) {
+    public TI getTI(long idTI, long idAtividade, String fotoUrl, int horas ) {
+        String[] columns = new String[] {dbHelper.TI_ID, dbHelper.TI_FOTO,
+                dbHelper.TI_HORAS, dbHelper.TI_ATIVIDADE_FK};
+
+        Cursor cursor = getDatabase().query(dbHelper.TI_NOME_TABELA, columns, dbHelper.TI_ID + " = '"
+                + idTI + "' AND " + dbHelper.TI_FOTO + " = '" + fotoUrl + "' AND "
+                + dbHelper.TI_HORAS + " = '" + horas + "' AND " + dbHelper.TI_ATIVIDADE_FK
+                + " = '" + idAtividade, null, null, null, null);
+
+        TI ti = createTI(cursor);
+
+        return ti;
+    }
+
+    private TI createTI(Cursor cursor) {
+        TI model = new TI(cursor.getLong(cursor.getColumnIndex(dbHelper.TI_ID)),
+                cursor.getLong(cursor.getColumnIndex(dbHelper.TI_ATIVIDADE_FK)),
+                cursor.getInt(cursor.getColumnIndex(dbHelper.TI_HORAS)),
+                cursor.getString(cursor.getColumnIndex(dbHelper.TI_FOTO)));
+
+        return model;
+    }
+
+    public List<Atividade> getAtividades(long idUser) {
         String[] columns = new String []{dbHelper.ATIVIDADE_ID, dbHelper.ATIVIDADE_NOME,
                 dbHelper.ATIVIDADE_CATEGORIA, dbHelper.ATIVIDADE_PRIORIDADE,
-                idUser};
-        Cursor cursor = getDatabase().query(dbHelper.ATIVIDADE_NOME_TABELA, columns, null, null, null, null, null, null);
+                dbHelper.USUARIO_ID};
+        Cursor cursor = getDatabase().query(dbHelper.ATIVIDADE_NOME_TABELA, columns,
+                dbHelper.USUARIO_ID + " < '" + idUser + "'", null, null, null, null, null);
 
         List<Atividade> atividades = new ArrayList<>();
         while (cursor.moveToNext()) {
@@ -76,6 +113,24 @@ public class AtividadePersister {
         }
         cursor.close();
         return atividades;
+    }
+
+    public List<TI> getTIs(long idAtividade) {
+        String[] columns = new String[] {dbHelper.TI_ID, dbHelper.TI_FOTO,
+                dbHelper.TI_HORAS, dbHelper.TI_ATIVIDADE_FK};
+
+        Cursor cursor = getDatabase().query(dbHelper.TI_NOME_TABELA, columns,
+                dbHelper.ATIVIDADE_ID + " < '" + idAtividade + "'", null, null, null, null, null);
+
+        List<TI> tisList = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            TI model = createTI(cursor);
+            tisList.add(model);
+        }
+
+        cursor.close();
+        return tisList;
     }
 
     private Atividade createAtividade(Cursor cursor) {
