@@ -33,23 +33,22 @@
         android:text="Data:"
         android:textAlignment="center"
         android:textSize="20sp"
-        android:id="@+id/textView6"
+        android:id="@+id/textData"
         android:layout_gravity="left" />
 
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="date"
+    <CalendarView
+        android:layout_width="264dp"
+        android:layout_height="145dp"
         android:ems="10"
-        android:id="@+id/editText"
+        android:id="@+id/editCalendar"
         android:layout_marginBottom="30dp"
         android:layout_gravity="right"
         android:layout_marginTop="-40dp" />
 
     <NumberPicker
         android:layout_width="wrap_content"
-        android:layout_height="54dp"
-        android:id="@+id/numberPicker"
+        android:layout_height="38dp"
+        android:id="@+id/editHour"
         android:layout_gravity="top|center_horizontal"
         android:layout_marginBottom="40dp"
         android:layout_marginTop="-20dp" />
@@ -60,7 +59,7 @@
         android:text="Horas"
         android:textAlignment="center"
         android:textSize="20sp"
-        android:id="@+id/textView"
+        android:id="@+id/textHour"
         android:layout_marginTop="-70dp"
         android:layout_marginRight="80dp"
         android:layout_gravity="left" />
@@ -78,16 +77,25 @@
         android:text="Atividade:"
         android:textAlignment="center"
         android:textSize="20sp"
-        android:id="@+id/textView2"
+        android:id="@+id/textAtividade"
         android:layout_gravity="left"
         android:layout_marginTop="10dp" />
+
+    <!--EditText
+        android:layout_width="181dp"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="Name"
+        android:ems="10"
+        android:id="@+id/editText2" /-->
 
     <Spinner
         android:layout_width="184dp"
         android:layout_height="wrap_content"
         android:id="@+id/spinner"
         android:layout_gravity="right"
-        android:layout_marginTop="-40dp" />
+        android:layout_marginTop="-40dp"
+        android:spinnerMode="dialog"/>
 
     <LinearLayout
         android:orientation="vertical"
@@ -95,13 +103,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp">
 
-        <EditText
+        <!--EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:text="Name"
             android:ems="10"
-            android:id="@+id/editText2" />
+            android:id="@+id/editText2" /-->
 
         <ToggleButton
             android:layout_width="wrap_content"
@@ -120,7 +128,6 @@
             android:text="Lazer"
             android:id="@+id/toggleButton"
             android:layout_gravity="right"
-
             android:textOff="Lazer"
             android:textOn="Lazer"
             android:layout_marginTop="-48.5dp" />
@@ -131,7 +138,7 @@
             android:text="Categoria"
             android:textAlignment="center"
             android:textSize="20sp"
-            android:id="@+id/textView3"
+            android:id="@+id/textCategoria"
             android:layout_marginTop="-40dp" />
 
         <TextView
@@ -140,20 +147,21 @@
             android:text="Prioridade"
             android:textAlignment="center"
             android:textSize="20sp"
-            android:id="@+id/textView4"
+            android:id="@+id/textPrioridade"
             android:layout_marginTop="30dp" />
 
         <Spinner
             android:layout_width="184dp"
             android:layout_height="wrap_content"
-            android:id="@+id/spinner2"
+            android:id="@+id/spinnerPrioridade"
             android:layout_gravity="right"
-            android:layout_marginTop="-59px" />
+            android:layout_marginTop="-59px"
+            android:spinnerMode="dialog"/>
 
         <EditText
             android:layout_width="148dp"
             android:layout_height="wrap_content"
-            android:id="@+id/editText3"
+            android:id="@+id/editTag"
             android:layout_gravity="right" />
 
         <TextView
@@ -162,7 +170,7 @@
             android:text="TAG"
             android:textAlignment="center"
             android:textSize="20sp"
-            android:id="@+id/textView5"
+            android:id="@+id/textTag"
             android:layout_marginTop="-30dp" />
 
     </LinearLayout>
@@ -172,7 +180,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Cancelar"
-        android:id="@+id/button"
+        android:id="@+id/btnCancel"
         android:layout_gravity="left|center_vertical"
         android:background="#e91212"
         android:textColor="#ffffff"
@@ -184,7 +192,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Confirmar"
-        android:id="@+id/button2"
+        android:id="@+id/btnOk"
         android:layout_gravity="center_horizontal"
         android:background="#c1e457"
         android:textColor="#ffffff"
