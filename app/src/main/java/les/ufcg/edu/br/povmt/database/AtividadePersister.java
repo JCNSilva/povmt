@@ -116,32 +116,8 @@ public class AtividadePersister {
     private Atividade createAtividade(Cursor cursor) {
         Atividade model = new Atividade(cursor.getLong(cursor.getColumnIndex(dbHelper.ATIVIDADE_ID)),
                 cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_NOME)),
-                getCategoria(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_CATEGORIA))),
-                getPrioridade(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_PRIORIDADE))));
+                Categoria.valueOf(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_CATEGORIA.toUpperCase()))),
+                Prioridade.valueOf(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_PRIORIDADE.toUpperCase()))));
         return model;
-    }
-
-    private Prioridade getPrioridade(String strPrioridade){
-        switch(strPrioridade.toLowerCase()){
-            case "baixa":
-                return Prioridade.BAIXA;
-            case "media":
-                return Prioridade.MEDIA;
-            case "alta":
-                return Prioridade.ALTA;
-            default:
-                return Prioridade.MEDIA;
-        }
-    }
-
-    private Categoria getCategoria(String strCategoria){
-        switch(strCategoria.toLowerCase()){
-            case "trabalho":
-                return Categoria.TRABALHO;
-            case "lazer":
-                return Categoria.LAZER;
-            default:
-                return Categoria.TRABALHO;
-        }
     }
 }
