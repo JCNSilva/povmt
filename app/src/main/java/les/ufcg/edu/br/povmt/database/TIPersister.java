@@ -97,6 +97,26 @@ public class TIPersister {
     }
 
 
+    public List<TI> getTISemana(long idAtividade, int semana) {
+        String[] columns = new String[] {dbHelper.TI_ID, dbHelper.TI_DATA,
+                dbHelper.TI_HORAS, dbHelper.TI_FOTO};
+
+        Cursor cursor = getDatabase().query(dbHelper.TI_NOME_TABELA, columns,
+                dbHelper.TI_ATIVIDADE_FK + " = '" + idAtividade + "' AND " +
+                dbHelper.TI_SEMANA + " = '" + semana + "'", null, null, null, null, null);
+
+        List<TI> tisList = new ArrayList<>();
+        cursor.moveToFirst();
+        while (cursor.moveToNext()) {
+            TI model = createTI(cursor);
+            tisList.add(model);
+        }
+
+        cursor.close();
+        return tisList;
+    }
+
+
     private TI createTI(Cursor cursor) {
         TI model = new TI(cursor.getLong(cursor.getColumnIndex(dbHelper.TI_ID)),
                 Calendar.getInstance(),
