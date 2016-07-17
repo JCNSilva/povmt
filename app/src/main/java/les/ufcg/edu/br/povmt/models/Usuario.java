@@ -1,6 +1,7 @@
 package les.ufcg.edu.br.povmt.models;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -74,5 +75,27 @@ public class Usuario {
             return;
         }
         atividadeList.remove(atividade);
+    }
+
+    public List<Atividade> getRanking() {
+        List<Atividade> ranking = atividadeList;
+        Collections.sort(ranking);
+        return ranking;
+    }
+
+    public int getTempoTotalInvestido(){
+        int soma = 0;
+        for(Atividade atividade: this.atividadeList){
+            if (atividade != null)
+                soma += atividade.getTempoInvestido();
+        }
+        return soma;
+    }
+
+    public float getProporcao(Atividade atividade) {
+        if(this.getTempoTotalInvestido() == 0){
+            return 0;
+        }
+        return (atividade.getTempoInvestido()/(float) getTempoTotalInvestido()) * 100;
     }
 }

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import les.ufcg.edu.br.povmt.models.Atividade;
@@ -32,7 +33,6 @@ public class AtividadePersister {
         return atividadePersister;
     }
 
-
     public void open() {
         database = dbHelper.getWritableDatabase();
     }
@@ -45,13 +45,15 @@ public class AtividadePersister {
         return this.database;
     }
 
-
     public long inserirAtividade(Atividade atividade, long idUser) {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(dbHelper.ATIVIDADE_NOME, atividade.getNome());
         contentValues.put(dbHelper.ATIVIDADE_CATEGORIA, atividade.getCategoria().toString());
         contentValues.put(dbHelper.ATIVIDADE_PRIORIDADE, atividade.getPrioridade().toString());
+        contentValues.put(dbHelper.ATIVIDADE_URLFOTO, atividade.getUrlFoto());
+        contentValues.put(dbHelper.ATIVIDADE_TI, atividade.getTempoInvestido());
+        contentValues.put(dbHelper.ATIVIDADE_DATA, atividade.getData().get(Calendar.WEEK_OF_YEAR));
         contentValues.put(dbHelper.ATIVIDADE_USUARIO_FK, idUser);
 
         long id = getDatabase().insert(dbHelper.ATIVIDADE_NOME_TABELA, null, contentValues);
@@ -59,12 +61,14 @@ public class AtividadePersister {
         return id;
     }
 
-
     public long atualizarAtividade(Atividade atividade, long idUser) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(dbHelper.ATIVIDADE_NOME, atividade.getNome());
         contentValues.put(dbHelper.ATIVIDADE_CATEGORIA, atividade.getCategoria().toString());
         contentValues.put(dbHelper.ATIVIDADE_PRIORIDADE, atividade.getPrioridade().toString());
+        contentValues.put(dbHelper.ATIVIDADE_URLFOTO, atividade.getUrlFoto());
+        contentValues.put(dbHelper.ATIVIDADE_TI, atividade.getTempoInvestido());
+        contentValues.put(dbHelper.ATIVIDADE_DATA, atividade.getData().get(Calendar.WEEK_OF_YEAR));
         contentValues.put(dbHelper.ATIVIDADE_USUARIO_FK, idUser);
 
         return getDatabase().update(dbHelper.ATIVIDADE_NOME_TABELA, contentValues,
@@ -80,7 +84,8 @@ public class AtividadePersister {
 
     public List<Atividade> getAtividades(long idUser) {
         String[] columns = new String []{dbHelper.ATIVIDADE_ID, dbHelper.ATIVIDADE_NOME,
-                dbHelper.ATIVIDADE_CATEGORIA, dbHelper.ATIVIDADE_PRIORIDADE};
+                dbHelper.ATIVIDADE_CATEGORIA, dbHelper.ATIVIDADE_PRIORIDADE, dbHelper.ATIVIDADE_URLFOTO,
+                dbHelper.ATIVIDADE_TI, dbHelper.ATIVIDADE_DATA};
         Cursor cursor = getDatabase().query(dbHelper.ATIVIDADE_NOME_TABELA, columns,
                 dbHelper.ATIVIDADE_USUARIO_FK + " = '" + idUser + "'", null, null, null, null, null);
 
@@ -97,7 +102,8 @@ public class AtividadePersister {
 
     public Atividade getAtividade(long idAtividade) {
         String[] columns = new String []{dbHelper.ATIVIDADE_ID, dbHelper.ATIVIDADE_NOME,
-                dbHelper.ATIVIDADE_CATEGORIA, dbHelper.ATIVIDADE_PRIORIDADE};
+                dbHelper.ATIVIDADE_CATEGORIA, dbHelper.ATIVIDADE_PRIORIDADE, dbHelper.ATIVIDADE_URLFOTO,
+                dbHelper.ATIVIDADE_TI, dbHelper.ATIVIDADE_DATA};
         Cursor cursor = getDatabase().query(dbHelper.ATIVIDADE_NOME_TABELA, columns,
                 dbHelper.ATIVIDADE_ID + " = '" + idAtividade + "'", null, null, null, null, null);
 
@@ -117,7 +123,14 @@ public class AtividadePersister {
         Atividade model = new Atividade(cursor.getLong(cursor.getColumnIndex(dbHelper.ATIVIDADE_ID)),
                 cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_NOME)),
                 Categoria.valueOf(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_CATEGORIA.toUpperCase()))),
-                Prioridade.valueOf(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_PRIORIDADE.toUpperCase()))));
+                Prioridade.valueOf(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_PRIORIDADE.toUpperCase()))),
+                cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_URLFOTO)),
+                cursor.getInt(cursor.getColumnIndex(dbHelper.ATIVIDADE_TI)),
+                Calendar.getInstance());
+
+        model.getData().setTimeInMillis(
+                cursor.getLong(cursor.getColumnIndex(dbHelper.ATIVIDADE_DATA))
+        );
         return model;
     }
 }

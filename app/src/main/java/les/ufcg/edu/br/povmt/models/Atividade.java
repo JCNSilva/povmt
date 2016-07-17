@@ -1,29 +1,35 @@
 package les.ufcg.edu.br.povmt.models;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
  * Created by Notebook on 14/07/2016.
  */
-public class Atividade {
+public class Atividade implements Comparable<Atividade> {
     private long id;
+    private int tempoInvestido;
     private String nome;
+    private String urlFoto;
+    private Calendar data;
     private Categoria categoria;
     private Prioridade prioridade;
-    private List<TI> tiList;
 
-    public Atividade(long id, String nome, Categoria categoria, Prioridade prioridade) {
+    public Atividade(long id, String nome, Categoria categoria, Prioridade prioridade, String urlFoto,
+                     int tempoInvestido, Calendar data) {
         this.id = id;
         this.nome = nome;
         this.categoria = categoria;
         this.prioridade = prioridade;
-        this.tiList = new ArrayList<>();
+        this.tempoInvestido = tempoInvestido;
+        this.urlFoto = urlFoto;
+        this.data = data;
     }
 
-    public Atividade(String nome, Categoria categoria, Prioridade prioridade) {
-        this(0, nome, categoria, prioridade);
-        this.tiList = new ArrayList<>();
+    public Atividade(String nome, Categoria categoria, Prioridade prioridade, String urlFoto,
+                     int tempoInvestido, Calendar data) {
+        this(0, nome, categoria, prioridade, urlFoto, tempoInvestido, data);
     }
 
     public String getNome() {
@@ -58,25 +64,45 @@ public class Atividade {
         this.id = id;
     }
 
-    public List<TI> getTiList() {
-        return tiList;
+    public int getTempoInvestido() {
+        return tempoInvestido;
     }
 
-    public void setTiList(List<TI> tiList) {
-        this.tiList = tiList;
+    public void setTempoInvestido(int tempoInvestido) {
+        this.tempoInvestido = tempoInvestido;
     }
 
-    public void addTI(TI ti) {
-        if (ti == null) {
-            return;
+    public String getUrlFoto() {
+        return urlFoto;
+    }
+
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
+    }
+
+    public Calendar getData() {
+        return data;
+    }
+
+    public void setData(Calendar data) {
+        this.data = data;
+    }
+
+    public void incrementaTempoInvestido(int tempo){
+        this.tempoInvestido += tempo;
+    }
+
+    public void decrementaTempoInvestido(int tempo){
+        this.tempoInvestido -= tempo;
+    }
+
+    @Override
+    public int compareTo(Atividade atividade) {
+        if(this.tempoInvestido < atividade.getTempoInvestido()) {
+            return -1;
+        } else if (this.tempoInvestido > atividade.getTempoInvestido()) {
+            return 1;
         }
-        tiList.add(ti);
-    }
-
-    public void removeTI(TI ti) {
-        if (ti == null) {
-            return;
-        }
-        tiList.remove(ti);
+        return 0;
     }
 }

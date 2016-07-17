@@ -20,21 +20,16 @@ package les.ufcg.edu.br.povmt.fragments;
  import java.util.List;
 
  import les.ufcg.edu.br.povmt.R;
- import les.ufcg.edu.br.povmt.database.TIPersister;
  import les.ufcg.edu.br.povmt.models.Atividade;
  import les.ufcg.edu.br.povmt.models.Categoria;
  import les.ufcg.edu.br.povmt.models.Prioridade;
- import les.ufcg.edu.br.povmt.models.TI;
 
 
 public class CreateTIFragment extends DialogFragment {
     private int numStyle;
     private int numTheme;
     private Calendar calendar;
-    private TI ti;
-    private TIPersister tiPersister;
     private Atividade atividade;
-
 
     public CreateTIFragment(int numStyle, int numTheme){
         this.numStyle = numStyle;
@@ -127,9 +122,8 @@ public class CreateTIFragment extends DialogFragment {
                 //TODO RECUPERAR ID DO CAMPO
                 if (atividade.equalsIgnoreCase("Nova Atividade")) {
                     idAtividade = criaAtividade("nome", Categoria.valueOf("lazer".toUpperCase()),
-                            Prioridade.valueOf(prioridade.toUpperCase()));
+                            Prioridade.valueOf(prioridade.toUpperCase()), "url", hora, calendar);
                 }
-                criaTi(calendar, hora, "url", idAtividade);
 
                 dismiss();
                 showDialogSuccess("Create TI","TI created with success!");
@@ -151,14 +145,8 @@ public class CreateTIFragment extends DialogFragment {
                 .show();
     }
 
-    private void criaTi(Calendar data, int hora, String url, long idAtividade){
-        ti = new TI(1355l, data, hora, url);
-        tiPersister = new TIPersister(getContext());
-        tiPersister.inserirTI(ti, idAtividade);
-    }
-
-    private long criaAtividade(String nome, Categoria categoria, Prioridade prioridade){
-        atividade = new Atividade(1344l, nome, categoria, prioridade);
+    private long criaAtividade(String nome, Categoria categoria, Prioridade prioridade, String url, int hora, Calendar data){
+        atividade = new Atividade(1344l, nome, categoria, prioridade, url, hora, data);
         return atividade.getId();
     }
 

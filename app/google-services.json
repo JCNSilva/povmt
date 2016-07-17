@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "305159962874",
-    "project_id": "povmt-1370"
+    "project_number": "199677204024",
+    "project_id": "povmt-da6e7"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:305159962874:android:dbfb663bac6f32a9",
+        "mobilesdk_app_id": "1:199677204024:android:dbfb663bac6f32a9",
         "android_client_info": {
           "package_name": "les.ufcg.edu.br.povmt"
         }
       },
       "oauth_client": [
         {
-          "client_id": "305159962874-obrbl4t1vbeq1rijq2b6hp0epb2jk1ss.apps.googleusercontent.com",
+          "client_id": "199677204024-daih57760gvgducn2lah2l9ns0tbalfv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "les.ufcg.edu.br.povmt",
-            "certificate_hash": "D9322EFDB5727B2C8DEC4C5F8EFFA19C3DE5BED6"
+            "certificate_hash": "7F201B100A4596C2482B63D805D9EAE8C08BCA17"
           }
         },
         {
-          "client_id": "305159962874-evtchshpotgcd8b087t1boo9e991e3a1.apps.googleusercontent.com",
+          "client_id": "199677204024-2f4d9a1u7ue42cdveanvjljmupjjrq9c.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAAd9G24GGslXSMcRMDRz9bAd8KEqo1Cj8"
+          "current_key": "AIzaSyBEEI0EdR_dWd8TjQEeVAtRXDDu5RDvg44"
         }
       ],
       "services": {
