@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by Notebook on 14/07/2016.
  */
-public class Atividade {
+public class Atividade implements Comparable<Atividade> {
     private long id;
     private String nome;
     private Categoria categoria;
@@ -78,5 +78,23 @@ public class Atividade {
             return;
         }
         tiList.remove(ti);
+    }
+
+    public int getTI() {
+        int soma = 0;
+        for (TI ti : tiList) {
+            soma += ti.getHoras();
+        }
+        return soma;
+    }
+
+    @Override
+    public int compareTo(Atividade aAtividade) {
+        if (this.getTI() < aAtividade.getTI()) {
+            return -1;
+        } else if (this.getTI() > aAtividade.getTI()) {
+            return 1;
+        }
+        return 0;
     }
 }
