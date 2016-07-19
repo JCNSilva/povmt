@@ -13,5 +13,15 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="criar">Criar TI</string>
+    <string name="criar">Registrar TI</string>
+    <string name="registrar_ti">Registrar TI</string>
+    <string name="dia">Dia</string>
+    <string name="horas">Horas</string>
+    <string name="atividade">Atividade</string>
+    <string name="nome">Nome:</string>
+    <string name="categoria">Categoria:</string>
+    <string name="prioridade">Prioridade:</string>
+    <string name="tag">Tag:</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="confirmar">Confirmar</string>
 </resources>

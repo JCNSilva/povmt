@@ -1,16 +1,12 @@
 package les.ufcg.edu.br.povmt.activities;
 
-import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -33,9 +29,9 @@ import com.squareup.picasso.Picasso;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.fragments.AboutFragment;
-import les.ufcg.edu.br.povmt.fragments.CreateTIFragment;
 import les.ufcg.edu.br.povmt.fragments.HistoryFragment;
 import les.ufcg.edu.br.povmt.fragments.HomeFragment;
+import les.ufcg.edu.br.povmt.fragments.RegisterTIFragment;
 import les.ufcg.edu.br.povmt.utils.CircleTransform;
 
 public class MainActivity extends AppCompatActivity
@@ -81,8 +77,11 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                CreateTIFragment cdf = new CreateTIFragment();
+                RegisterTIFragment cdf = new RegisterTIFragment();
                 cdf.show(ft, "dialog");
+//                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                CreateTIFragment cdf = new CreateTIFragment();
+//                cdf.show(ft, "dialog");
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }
