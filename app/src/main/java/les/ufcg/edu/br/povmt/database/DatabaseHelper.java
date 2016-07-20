@@ -13,7 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     //------------------ INFORMAÇÕES GERAIS -----------------------
-    public static final int VERSAO_BD = 4;
+    public static final int VERSAO_BD = 5;
     public static final String NOME_DB = "POVMTDatabase";
 
 
@@ -69,7 +69,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String SQL_TI_CRIAR_TABELA = "CREATE TABLE "
             + TI_NOME_TABELA + "("
             + TI_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
-            + TI_DATA + " INTEGER NOT NULL, "
+            + TI_DATA + " TEXT NOT NULL, "
             + TI_SEMANA + " INTEGER NOT NULL, "
             + TI_HORAS + " INTEGER NOT NULL, "
             + TI_ATIVIDADE_FK + " INTEGER NOT NULL, "

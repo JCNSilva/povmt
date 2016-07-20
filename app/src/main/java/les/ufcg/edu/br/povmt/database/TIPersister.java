@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import les.ufcg.edu.br.povmt.models.TI;
@@ -61,7 +60,7 @@ public class TIPersister {
 
     public TI getTI(long idTI) {
         String[] columns = new String[] {dbHelper.TI_ID, dbHelper.TI_DATA,
-                dbHelper.TI_HORAS};
+                dbHelper.TI_HORAS, dbHelper.TI_SEMANA};
 
         Cursor cursor = getDatabase().query(dbHelper.TI_NOME_TABELA, columns, dbHelper.TI_ID + " = '"
                 + idTI + "'", null, null, null, null);
@@ -79,7 +78,7 @@ public class TIPersister {
 
     public List<TI> getTIs(long idAtividade) {
         String[] columns = new String[] {dbHelper.TI_ID, dbHelper.TI_DATA,
-                dbHelper.TI_HORAS};
+                dbHelper.TI_HORAS, dbHelper.TI_SEMANA};
 
         Cursor cursor = getDatabase().query(dbHelper.TI_NOME_TABELA, columns,
                 dbHelper.TI_ATIVIDADE_FK + " = '" + idAtividade + "'", null, null, null, null, null);
@@ -98,7 +97,7 @@ public class TIPersister {
 
     public List<TI> getTISemana(long idAtividade, int semana) {
         String[] columns = new String[] {dbHelper.TI_ID, dbHelper.TI_DATA,
-                dbHelper.TI_HORAS};
+                dbHelper.TI_HORAS, dbHelper.TI_SEMANA};
 
         Cursor cursor = getDatabase().query(dbHelper.TI_NOME_TABELA, columns,
                 dbHelper.TI_ATIVIDADE_FK + " = '" + idAtividade + "' AND " +

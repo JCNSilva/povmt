@@ -118,8 +118,8 @@ public class AtividadePersister {
     private Atividade createAtividade(Cursor cursor) {
         Atividade model = new Atividade(cursor.getLong(cursor.getColumnIndex(dbHelper.ATIVIDADE_ID)),
                 cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_NOME)),
-                Categoria.valueOf(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_CATEGORIA.toUpperCase()))),
-                Prioridade.valueOf(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_PRIORIDADE.toUpperCase()))),
+                Categoria.valueOf(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_CATEGORIA))),
+                Prioridade.valueOf(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_PRIORIDADE))),
                 cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_FOTO)));
         return model;
     }
