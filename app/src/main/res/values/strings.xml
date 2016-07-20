@@ -25,4 +25,5 @@
     <string name="cancelar">Cancelar</string>
     <string name="confirmar">Confirmar</string>
     <string name="nova_atividade">Nova Atividade</string>
+    <string name="tempo_investido">Tempo Investido</string>
 </resources>

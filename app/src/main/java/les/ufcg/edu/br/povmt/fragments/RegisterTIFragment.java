@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +65,7 @@ public class RegisterTIFragment extends DialogFragment {
     private Button cancel;
     private Button ok;
 
-    private ArrayList atividades;
+    private ArrayList<Atividade> atividades;
     private AtividadePersister atividadePersister;
     private LinearLayout layout_new_activity;
     private Atividade mAtividade;
@@ -83,7 +84,7 @@ public class RegisterTIFragment extends DialogFragment {
 //        idUser = Long.parseLong(sharedPreferences.getString("USER_ID",""));
         idUser = 123456;
         atividadePersister = new AtividadePersister(getContext());
-        atividades = (ArrayList) atividadePersister.getAtividades(idUser);
+        atividades = (ArrayList<Atividade>) atividadePersister.getAtividades(idUser);
 
         tiPersister = new TIPersister(getContext());
 
@@ -91,7 +92,6 @@ public class RegisterTIFragment extends DialogFragment {
         listeners();
 
         atividades.add(new Atividade("Nova Atividade"));
-        atividades.add(new Atividade("Teste"));
         ArrayAdapter<Atividade> adapter =
                 new ArrayAdapter<Atividade>(getContext(),
                 android.R.layout.simple_spinner_item, atividades);
@@ -134,6 +134,11 @@ public class RegisterTIFragment extends DialogFragment {
                 dismiss();
             }
         });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
     }
 
     public void initViews(View view) {
