@@ -48,8 +48,8 @@ public class TIPersister {
     public long inserirTI(TI ti, long idAtividade) {
         ContentValues contentValues = new ContentValues();
 
-        contentValues.put(dbHelper.TI_DATA, ti.getData().getTimeInMillis());
-        contentValues.put(dbHelper.TI_SEMANA, ti.getData().get(Calendar.WEEK_OF_YEAR));
+        contentValues.put(dbHelper.TI_DATA, ti.getData());
+        contentValues.put(dbHelper.TI_SEMANA, ti.getSemana());
         contentValues.put(dbHelper.TI_HORAS, ti.getHoras());
         contentValues.put(dbHelper.TI_ATIVIDADE_FK, idAtividade);
 
@@ -118,12 +118,9 @@ public class TIPersister {
 
     private TI createTI(Cursor cursor) {
         TI model = new TI(cursor.getLong(cursor.getColumnIndex(dbHelper.TI_ID)),
-                Calendar.getInstance(),
+                cursor.getString(cursor.getColumnIndex(dbHelper.TI_DATA)),
+                cursor.getInt(cursor.getColumnIndex(dbHelper.TI_SEMANA)),
                 cursor.getInt(cursor.getColumnIndex(dbHelper.TI_HORAS)));
-
-        model.getData().setTimeInMillis(
-                cursor.getLong(cursor.getColumnIndex(dbHelper.TI_DATA))
-        );
         return model;
     }
 

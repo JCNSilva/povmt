@@ -28,6 +28,10 @@ public class Atividade implements Comparable<Atividade> {
         this.tiList = new ArrayList<>();
     }
 
+    public Atividade(String nome) {
+        this.nome = nome;
+    }
+
     public String getNome() {
         return nome;
     }
@@ -106,5 +110,10 @@ public class Atividade implements Comparable<Atividade> {
             return 1;
         }
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        return nome;
     }
 }

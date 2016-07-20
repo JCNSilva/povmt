@@ -10,5 +10,9 @@
         <item>Lazer</item>
     </string-array>
 
-
+    <string-array name="prioridades">
+        <item>Baixa</item>
+        <item>Média</item>
+        <item>Alta</item>
+    </string-array>
 </resources>

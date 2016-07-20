@@ -1,25 +1,26 @@
 package les.ufcg.edu.br.povmt.models;
 
-import java.util.Calendar;
-
 /**
  * Created by Julio on 14/07/2016.
  */
 public class TI {
 
     private long id;
-    private Calendar data;
+    private String data;
     private int horas;
+    private int semana;
 
-    public TI(long id, Calendar data, int horas) {
+    public TI(long id, String data, int semana, int horas) {
         this.id = id;
         this.data = data;
         this.horas = horas;
+        this.semana = semana;
     }
 
-    public TI(Calendar data, int horas, String urlFoto) {
-        this(0, data, horas);
+    public TI(String data, int semana, int horas) {
+        this(0, data, semana, horas);
     }
+
 
     public long getId() {
         return id;
@@ -29,11 +30,11 @@ public class TI {
         this.id = id;
     }
 
-    public Calendar getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(Calendar data) {
+    public void setData(String data) {
         this.data = data;
     }
 
@@ -43,5 +44,13 @@ public class TI {
 
     public void setHoras(int horas) {
         this.horas = horas;
+    }
+
+    public int getSemana() {
+        return semana;
+    }
+
+    public void setSemana(int semana) {
+        this.semana = semana;
     }
 }
