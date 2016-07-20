@@ -19,6 +19,8 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 
 import les.ufcg.edu.br.povmt.R;
+import les.ufcg.edu.br.povmt.database.UsuarioPersister;
+import les.ufcg.edu.br.povmt.models.Usuario;
 
 public class SplashActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
@@ -26,6 +28,7 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
     public static final String USER_NOME = "USER_NOME";
     public static final String USER_EMAIL = "USER_EMAIL";
     public static final String USER_URL_PHOTO = "USER_URL_PHOTO";
+    public static final String USER_ID = "USER_ID";
 
     private static final int RC_SIGN_IN = 9001;
     private static final String TAG = "SplashActivity";
@@ -85,19 +88,24 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
             String nome = acct.getDisplayName();
             String email = acct.getEmail();
             Uri foto_url = acct.getPhotoUrl();
+            String id_user = acct.getId();
 
             SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCE_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
             editor.putString(USER_NOME, nome);
             editor.putString(USER_EMAIL, email);
-
+            editor.putString(USER_ID, id_user);
+            Usuario user;
             if (foto_url != null) {
                 editor.putString(USER_URL_PHOTO, foto_url.toString());
+                user = new Usuario(Long.parseLong(id_user), nome, email, foto_url.toString());
             } else {
                 editor.putString(USER_URL_PHOTO, null);
+              user = new Usuario(Long.parseLong(id_user), nome, email, "");
             }
-
+            UsuarioPersister userPersister = new  UsuarioPersister(getApplicationContext());
+            userPersister.inserirUsuario(user);
             editor.apply();
 
             updateUI(true);
