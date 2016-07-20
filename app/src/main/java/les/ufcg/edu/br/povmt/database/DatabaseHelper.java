@@ -13,7 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     //------------------ INFORMAÇÕES GERAIS -----------------------
-    public static final int VERSAO_BD = 3;
+    public static final int VERSAO_BD = 4;
     public static final String NOME_DB = "POVMTDatabase";
 
 
@@ -41,6 +41,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String ATIVIDADE_NOME = "nome";
     public static final String ATIVIDADE_CATEGORIA = "categoria";
     public static final String ATIVIDADE_PRIORIDADE = "prioridade";
+    public static final String ATIVIDADE_FOTO = "foto";
     public static final String ATIVIDADE_USUARIO_FK = "usuario";
     public static final String SQL_ATIVIDADE_CRIAR_TABELA = "CREATE TABLE "
             + ATIVIDADE_NOME_TABELA + "("
@@ -48,6 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + ATIVIDADE_NOME + " TEXT NOT NULL, "
             + ATIVIDADE_CATEGORIA + " TEXT, "
             + ATIVIDADE_PRIORIDADE + " TEXT NOT NULL, "
+            + ATIVIDADE_FOTO + " TEXT NOT NULL, "
             + ATIVIDADE_USUARIO_FK + " INTEGER NOT NULL, "
             + "FOREIGN KEY (" + ATIVIDADE_USUARIO_FK + ") REFERENCES "
             + USUARIO_NOME_TABELA + " (" + USUARIO_ID + ") "
@@ -63,7 +65,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TI_DATA = "data";
     public static final String TI_SEMANA = "semana";
     public static final String TI_HORAS = "horas";
-    public static final String TI_FOTO = "foto";
     public static final String TI_ATIVIDADE_FK = "atividade";
     public static final String SQL_TI_CRIAR_TABELA = "CREATE TABLE "
             + TI_NOME_TABELA + "("
@@ -71,7 +72,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + TI_DATA + " INTEGER NOT NULL, "
             + TI_SEMANA + " INTEGER NOT NULL, "
             + TI_HORAS + " INTEGER NOT NULL, "
-            + TI_FOTO + " TEXT NOT NULL, "
             + TI_ATIVIDADE_FK + " INTEGER NOT NULL, "
             + "FOREIGN KEY (" + TI_ATIVIDADE_FK + ") REFERENCES "
             + ATIVIDADE_NOME_TABELA + " (" + ATIVIDADE_ID + ") "

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Notebook on 14/07/2016.
+ * Created by Mendel on 14/07/2016.
  */
 public class Atividade implements Comparable<Atividade> {
     private long id;
@@ -12,17 +12,19 @@ public class Atividade implements Comparable<Atividade> {
     private Categoria categoria;
     private Prioridade prioridade;
     private List<TI> tiList;
+    private String urlFoto;
 
-    public Atividade(long id, String nome, Categoria categoria, Prioridade prioridade) {
+    public Atividade(long id, String nome, Categoria categoria, Prioridade prioridade, String urlFoto) {
         this.id = id;
         this.nome = nome;
         this.categoria = categoria;
         this.prioridade = prioridade;
         this.tiList = new ArrayList<>();
+        this.urlFoto = urlFoto;
     }
 
-    public Atividade(String nome, Categoria categoria, Prioridade prioridade) {
-        this(0, nome, categoria, prioridade);
+    public Atividade(String nome, Categoria categoria, Prioridade prioridade, String urlFoto) {
+        this(0, nome, categoria, prioridade, urlFoto);
         this.tiList = new ArrayList<>();
     }
 
@@ -64,6 +66,14 @@ public class Atividade implements Comparable<Atividade> {
 
     public void setTiList(List<TI> tiList) {
         this.tiList = tiList;
+    }
+
+    public String getUrlFoto() {
+        return urlFoto;
+    }
+
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
     }
 
     public void addTI(TI ti) {

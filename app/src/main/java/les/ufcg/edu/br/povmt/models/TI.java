@@ -10,17 +10,15 @@ public class TI {
     private long id;
     private Calendar data;
     private int horas;
-    private String urlFoto;
 
-    public TI(long id, Calendar data, int horas, String urlFoto) {
+    public TI(long id, Calendar data, int horas) {
         this.id = id;
         this.data = data;
         this.horas = horas;
-        this.urlFoto = urlFoto;
     }
 
     public TI(Calendar data, int horas, String urlFoto) {
-        this(0, data, horas, urlFoto);
+        this(0, data, horas);
     }
 
     public long getId() {
@@ -45,13 +43,5 @@ public class TI {
 
     public void setHoras(int horas) {
         this.horas = horas;
-    }
-
-    public String getUrlFoto() {
-        return urlFoto;
-    }
-
-    public void setUrlFoto(String urlFoto) {
-        this.urlFoto = urlFoto;
     }
 }

@@ -51,7 +51,6 @@ public class TIPersister {
         contentValues.put(dbHelper.TI_DATA, ti.getData().getTimeInMillis());
         contentValues.put(dbHelper.TI_SEMANA, ti.getData().get(Calendar.WEEK_OF_YEAR));
         contentValues.put(dbHelper.TI_HORAS, ti.getHoras());
-        contentValues.put(dbHelper.TI_FOTO, ti.getUrlFoto());
         contentValues.put(dbHelper.TI_ATIVIDADE_FK, idAtividade);
 
         long id = getDatabase().insert(dbHelper.TI_NOME_TABELA, null, contentValues);
@@ -62,7 +61,7 @@ public class TIPersister {
 
     public TI getTI(long idTI) {
         String[] columns = new String[] {dbHelper.TI_ID, dbHelper.TI_DATA,
-                dbHelper.TI_HORAS, dbHelper.TI_FOTO};
+                dbHelper.TI_HORAS};
 
         Cursor cursor = getDatabase().query(dbHelper.TI_NOME_TABELA, columns, dbHelper.TI_ID + " = '"
                 + idTI + "'", null, null, null, null);
@@ -80,7 +79,7 @@ public class TIPersister {
 
     public List<TI> getTIs(long idAtividade) {
         String[] columns = new String[] {dbHelper.TI_ID, dbHelper.TI_DATA,
-                dbHelper.TI_HORAS, dbHelper.TI_FOTO};
+                dbHelper.TI_HORAS};
 
         Cursor cursor = getDatabase().query(dbHelper.TI_NOME_TABELA, columns,
                 dbHelper.TI_ATIVIDADE_FK + " = '" + idAtividade + "'", null, null, null, null, null);
@@ -99,7 +98,7 @@ public class TIPersister {
 
     public List<TI> getTISemana(long idAtividade, int semana) {
         String[] columns = new String[] {dbHelper.TI_ID, dbHelper.TI_DATA,
-                dbHelper.TI_HORAS, dbHelper.TI_FOTO};
+                dbHelper.TI_HORAS};
 
         Cursor cursor = getDatabase().query(dbHelper.TI_NOME_TABELA, columns,
                 dbHelper.TI_ATIVIDADE_FK + " = '" + idAtividade + "' AND " +
@@ -120,8 +119,7 @@ public class TIPersister {
     private TI createTI(Cursor cursor) {
         TI model = new TI(cursor.getLong(cursor.getColumnIndex(dbHelper.TI_ID)),
                 Calendar.getInstance(),
-                cursor.getInt(cursor.getColumnIndex(dbHelper.TI_HORAS)),
-                cursor.getString(cursor.getColumnIndex(dbHelper.TI_FOTO)));
+                cursor.getInt(cursor.getColumnIndex(dbHelper.TI_HORAS)));
 
         model.getData().setTimeInMillis(
                 cursor.getLong(cursor.getColumnIndex(dbHelper.TI_DATA))
