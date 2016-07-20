@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.database.AtividadePersister;
+import les.ufcg.edu.br.povmt.database.TIPersister;
 import les.ufcg.edu.br.povmt.models.Atividade;
 import les.ufcg.edu.br.povmt.utils.HomeListAdapter;
 
@@ -31,6 +32,7 @@ public class HomeFragment extends Fragment {
     private ListView lista_atividades;
     private TextView lista_vazia;
     private LinearLayout tabela;
+    private TIPersister tiPersister;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,12 +40,24 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         idUser = 123456;
+
+        initViews(view);
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         atividadePersister = new AtividadePersister(getContext());
         atividades = (ArrayList) atividadePersister.getAtividades(idUser);
-        lista_atividades = (ListView) view.findViewById(R.id.lista_atividades);
-        lista_vazia = (TextView) view.findViewById(R.id.sem_ti);
-        tabela = (LinearLayout) view.findViewById(R.id.tabela);
 
+        updateUI();
+
+        HomeListAdapter adapter = new HomeListAdapter(getContext(), atividades);
+        lista_atividades.setAdapter(adapter);
+    }
+
+    private void updateUI() {
         if (atividades.isEmpty()) {
             lista_vazia.setVisibility(View.VISIBLE);
             tabela.setVisibility(View.GONE);
@@ -51,11 +65,10 @@ public class HomeFragment extends Fragment {
             lista_vazia.setVisibility(View.GONE);
             tabela.setVisibility(View.VISIBLE);
         }
-
-        HomeListAdapter adapter = new HomeListAdapter(getContext(), atividades);
-        lista_atividades.setAdapter(adapter);
-
-        return view;
     }
-
+    public void initViews(View view){
+        lista_atividades = (ListView) view.findViewById(R.id.lista_atividades);
+        lista_vazia = (TextView) view.findViewById(R.id.sem_ti);
+        tabela = (LinearLayout) view.findViewById(R.id.tabela);
+    }
 }
