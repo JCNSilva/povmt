@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Collections;
 import java.util.List;
 
 import les.ufcg.edu.br.povmt.R;
@@ -20,6 +21,7 @@ public class AtividadeAdapter extends RecyclerView.Adapter<AtividadeAdapter.Ativ
 
     public AtividadeAdapter(List<Atividade> mAtividades) {
         this.mAtividades = mAtividades;
+        Collections.sort(this.mAtividades);
     }
 
     @Override
@@ -32,9 +34,12 @@ public class AtividadeAdapter extends RecyclerView.Adapter<AtividadeAdapter.Ativ
     @Override
     public void onBindViewHolder(AtividadeViewHolder holder, int position) {
         holder.nome.setText(mAtividades.get(position).getNome());
-        holder.prioridade.setText(mAtividades.get(position).getPrioridade().toString());
-        holder.categoria.setText(mAtividades.get(position).getCategoria().toString());
-        holder.tempoInvestido.setText(String.valueOf(mAtividades.get(position).getTI()));
+//        holder.prioridade.setText(mAtividades.get(position).getPrioridade().toString());
+//        holder.categoria.setText(mAtividades.get(position).getCategoria().toString());
+        int ti = mAtividades.get(position).getTI();
+        holder.tempoInvestido.setText(String.valueOf(ti) + " horas");
+        holder.proporcao.setText((ti/getHorasInvestidas() * 100) + "%");
+
     }
 
     @Override
@@ -43,6 +48,7 @@ public class AtividadeAdapter extends RecyclerView.Adapter<AtividadeAdapter.Ativ
     }
 
     public static class AtividadeViewHolder extends RecyclerView.ViewHolder {
+        private final TextView proporcao;
         public TextView categoria;
         public TextView prioridade;
         public TextView nome;
@@ -50,12 +56,24 @@ public class AtividadeAdapter extends RecyclerView.Adapter<AtividadeAdapter.Ativ
 
         public AtividadeViewHolder(View itemView) {
             super(itemView);
-            categoria = (TextView) itemView.findViewById(R.id.tv_tipo_atividade);
-            prioridade = (TextView) itemView.findViewById(R.id.tv_prioridade_atividade);
+//            categoria = (TextView) itemView.findViewById(R.id.tv_tipo_atividade);
+//            prioridade = (TextView) itemView.findViewById(R.id.tv_prioridade_atividade);
             nome = (TextView) itemView.findViewById(R.id.tv_nome_atividade);
             tempoInvestido = (TextView) itemView.findViewById(R.id.tv_tempo_atividade);
+            proporcao = (TextView) itemView.findViewById(R.id.tv_proporcao_atividade);
         }
     }
 
+    public List<Atividade> getmAtividades() {
+        return mAtividades;
+    }
 
+    private float getHorasInvestidas() {
+        float horasInvestidas = 0;
+        List<Atividade> atividadesList = getmAtividades();
+        for (int i = 0; i < atividadesList.size(); i++) {
+            horasInvestidas += atividadesList.get(i).getTI();
+        }
+        return horasInvestidas;
+    }
 }

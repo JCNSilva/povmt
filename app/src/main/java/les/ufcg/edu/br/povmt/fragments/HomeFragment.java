@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.database.AtividadePersister;
@@ -22,11 +23,12 @@ import les.ufcg.edu.br.povmt.database.TIPersister;
 import les.ufcg.edu.br.povmt.models.Atividade;
 import les.ufcg.edu.br.povmt.utils.AtividadeAdapter;
 import les.ufcg.edu.br.povmt.utils.HomeListAdapter;
+import les.ufcg.edu.br.povmt.utils.IonResume;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements IonResume {
 
 
     private long idUser;
@@ -37,6 +39,7 @@ public class HomeFragment extends Fragment {
     private LinearLayout campo_atividades;
     private TextView horas_investidas;
     private TIPersister tiPersister;
+    public static AtividadeAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -54,8 +57,10 @@ public class HomeFragment extends Fragment {
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         lista_atividades.setLayoutManager(llm);
 
-        //TODO Calcular TI na Semana
-        horas_investidas.setText("0");
+        atividadePersister = new AtividadePersister(getContext());
+        atividades = (ArrayList) atividadePersister.getAtividades(idUser);
+        adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
+        lista_atividades.setAdapter(adapter);
 
         if (atividades.isEmpty()) {
             lista_vazia.setVisibility(View.VISIBLE);
@@ -65,10 +70,33 @@ public class HomeFragment extends Fragment {
             campo_atividades.setVisibility(View.VISIBLE);
         }
 
-        AtividadeAdapter adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
-        lista_atividades.setAdapter(adapter);
-
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        atividadePersister = new AtividadePersister(getContext());
+        atividades = (ArrayList) atividadePersister.getAtividades(idUser);
+        adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
+        lista_atividades.setAdapter(adapter);
+
+        //TODO Calcular TI na Semana
+        horas_investidas.setText(String.valueOf(getHorasInvestidas()) + " " + getString(R.string.horas_investidas));
+
+    }
+
+    @Override
+    public void atualizaLista() {
+        onResume();
+    }
+
+    private int getHorasInvestidas() {
+        int horasInvestidas = 0;
+        List<Atividade> atividadesList = adapter.getmAtividades();
+        for (int i = 0; i < atividadesList.size(); i++) {
+            horasInvestidas += atividadesList.get(i).getTI();
+        }
+        return horasInvestidas;
+    }
 }

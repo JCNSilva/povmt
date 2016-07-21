@@ -105,9 +105,9 @@ public class Atividade implements Comparable<Atividade> {
     @Override
     public int compareTo(Atividade aAtividade) {
         if (this.getTI() < aAtividade.getTI()) {
-            return -1;
-        } else if (this.getTI() > aAtividade.getTI()) {
             return 1;
+        } else if (this.getTI() > aAtividade.getTI()) {
+            return -1;
         }
         return 0;
     }

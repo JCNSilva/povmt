@@ -1,6 +1,7 @@
 package les.ufcg.edu.br.povmt.fragments;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import les.ufcg.edu.br.povmt.models.Categoria;
 import les.ufcg.edu.br.povmt.models.InputException;
 import les.ufcg.edu.br.povmt.models.Prioridade;
 import les.ufcg.edu.br.povmt.models.TI;
+import les.ufcg.edu.br.povmt.utils.IonResume;
 
 
 /**
@@ -79,6 +81,11 @@ public class RegisterTIFragment extends DialogFragment {
     private SharedPreferences sharedPreferences;
     private long idUser;
     private TIPersister tiPersister;
+    private IonResume homeFragment;
+
+    public RegisterTIFragment(IonResume homeFragment) {
+        this.homeFragment = homeFragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -131,10 +138,12 @@ public class RegisterTIFragment extends DialogFragment {
             public void onClick(View v) {
                 try{
                     prepareData();
+                    homeFragment.atualizaLista();
                     dismiss();
                 }catch(InputException e){
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
 
@@ -177,18 +186,11 @@ public class RegisterTIFragment extends DialogFragment {
         layout_new_activity = (LinearLayout) view.findViewById(R.id.layout_new_activity);
     }
 
-
     //Prepara dados para BD
     private void prepareData() throws InputException {
         String dia_db = getDate(dia.getValue());
         int semana_db = getWeek(dia_db);
-
-        try {
-            horas_db = Integer.parseInt(String.valueOf(horas.getText()));
-        } catch (NumberFormatException numberE) {
-            throw new InputException("Hora deve ser um valor entre 0 e 24");
-        }
-
+        horas_db = Integer.parseInt(String.valueOf(horas.getText()));
         if( horas_db <= 0 || horas_db > 24){
             throw new InputException("Hora deve ser um valor entre 0 e 24");
         }
@@ -203,7 +205,6 @@ public class RegisterTIFragment extends DialogFragment {
             if(nomeAtividade_db.trim().equals("")){
                 throw new InputException("Nome da Atividade Inválido!");
             }
-
             Categoria categoria_db = null;
             if(categoria.getValue() == TRABALHO) {
                 categoria_db = Categoria.TRABALHO;
@@ -222,7 +223,7 @@ public class RegisterTIFragment extends DialogFragment {
             }
 
             operation = INSERIR;
-            atividade_db = new Atividade(nomeAtividade_db, categoria_db, prioridade_db, tagAtividade_db);
+            atividade_db = new Atividade(nomeAtividade_db, categoria_db, prioridade_db, null);
         } else {
             operation = ATUALIZAR;
             atividade_db = mAtividade;

@@ -5,65 +5,82 @@
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
 
-        <LinearLayout
+        <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/ll_atividade"
             android:orientation="vertical"
-            android:background="@color/colorAccent">
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center_vertical|center|center_horizontal"
+            android:stretchColumns="*"
+            android:weightSum="0"
+            android:showDividers="middle">
 
-            <RelativeLayout
+            <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/ll_atividade_up"
-                android:orientation="horizontal">
-
-                <TextView android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tv_tipo_atividade"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="5dp"
-                    android:layout_alignParentLeft="true"/>
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:padding="5dp">
 
                 <TextView android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:paddingRight="10dp"
-                    android:paddingTop="5dp"
-                    android:id="@+id/tv_prioridade_atividade"/>
+                    android:text="@string/atividade"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical|center|center_horizontal" />
 
-            </RelativeLayout>
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tempo_investido"
+                    android:layout_alignParentLeft="true"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical|center|center_horizontal" />
 
-            <RelativeLayout
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/propor_o"
+                    android:layout_alignParentLeft="true"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical|center|center_horizontal" />
+
+            </TableRow>
+
+            <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/ll_atividade_down"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:padding="5dp">
 
                 <TextView android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20dp"
-                    android:paddingLeft="10dp"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
                     android:layout_alignParentLeft="true"
-                    android:id="@+id/tv_nome_atividade"/>
+                    android:id="@+id/tv_nome_atividade"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical|center|center_horizontal" />
 
                 <TextView android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="16dp"
-                    android:paddingRight="10dp"
-                    android:paddingTop="5dp"
-                    android:paddingBottom="5dp"
                     android:layout_alignParentRight="true"
-                    android:id="@+id/tv_tempo_atividade"/>
+                    android:id="@+id/tv_tempo_atividade"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical|center|center_horizontal" />
 
-            </RelativeLayout>
+                <TextView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/tv_proporcao_atividade"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical|center|center_horizontal" />
+            </TableRow>
 
-        </LinearLayout>
-
+        </TableLayout>
     </android.support.v7.widget.CardView>
+
+
 
 </LinearLayout>

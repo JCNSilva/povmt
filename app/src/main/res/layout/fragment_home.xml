@@ -24,18 +24,22 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_horasinv_semana"
-                android:textSize="20dp"/>
+                android:textSize="20dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical|center|center_horizontal" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/tv_horaslabel"
-                android:text="@string/horas_investidas"
-                android:textSize="16dp"
-                android:paddingLeft="5dp"/>
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:id="@+id/tv_horaslabel"-->
+                <!--android:text="@string/horas_investidas"-->
+                <!--android:textSize="16dp"-->
+                <!--android:paddingLeft="5dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:gravity="center_vertical|center|center_horizontal" />-->
 
         </LinearLayout>
 
