@@ -19,8 +19,10 @@ public class AtividadePersister {
     private SQLiteDatabase database;
     private final DatabaseHelper dbHelper;
     private static AtividadePersister atividadePersister;
+    private Context context;
 
     public AtividadePersister(Context context) {
+        this.context = context;
         dbHelper = new DatabaseHelper(context);
     }
 
@@ -116,11 +118,16 @@ public class AtividadePersister {
 
 
     private Atividade createAtividade(Cursor cursor) {
-        Atividade model = new Atividade(cursor.getLong(cursor.getColumnIndex(dbHelper.ATIVIDADE_ID)),
+        final long idAtividade = cursor.getLong(cursor.getColumnIndex(dbHelper.ATIVIDADE_ID));
+
+        Atividade model = new Atividade(idAtividade,
                 cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_NOME)),
                 Categoria.valueOf(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_CATEGORIA))),
                 Prioridade.valueOf(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_PRIORIDADE))),
                 cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_FOTO)));
+
+        TIPersister tip = new TIPersister(this.context);
+        model.setTiList(tip.getTIs(idAtividade));
         return model;
     }
 }
