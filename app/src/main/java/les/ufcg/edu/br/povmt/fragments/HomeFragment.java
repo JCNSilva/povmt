@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.database.AtividadePersister;
+import les.ufcg.edu.br.povmt.database.TIPersister;
 import les.ufcg.edu.br.povmt.models.Atividade;
 import les.ufcg.edu.br.povmt.utils.AtividadeAdapter;
 import les.ufcg.edu.br.povmt.utils.HomeListAdapter;
@@ -35,6 +36,7 @@ public class HomeFragment extends Fragment {
     private TextView lista_vazia;
     private LinearLayout campo_atividades;
     private TextView horas_investidas;
+    private TIPersister tiPersister;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

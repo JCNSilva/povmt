@@ -211,9 +211,11 @@ public class RegisterTIFragment extends DialogFragment {
     //Salva no BD
     private void saveData(int operation, Atividade atv, TI ti) {
        if(operation == ATUALIZAR){
-//           atividadePersister.atualizarAtividade(atv, idUser);
            tiPersister.inserirTI(ti, atv.getId());
+//           atv.addTI(ti);
+           atividadePersister.atualizarAtividade(atv, idUser);
        }else if (operation == INSERIR){
+//           atv.addTI(ti);
            atividadePersister.inserirAtividade(atv, idUser);
            tiPersister.inserirTI(ti, atv.getId());
        }
