@@ -130,12 +130,11 @@ public class RegisterTIFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 try{
-                    checkFields();
                     prepareData();
+                    dismiss();
                 }catch(InputException e){
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-                dismiss();
             }
         });
 
@@ -178,35 +177,32 @@ public class RegisterTIFragment extends DialogFragment {
         layout_new_activity = (LinearLayout) view.findViewById(R.id.layout_new_activity);
     }
 
-    private void checkFields() throws InputException{
-        try{
+
+    //Prepara dados para BD
+    private void prepareData() throws InputException {
+        String dia_db = getDate(dia.getValue());
+        int semana_db = getWeek(dia_db);
+
+        try {
             horas_db = Integer.parseInt(String.valueOf(horas.getText()));
-            if( horas_db <= 0 || horas_db > 24){
-                throw new InputException("Hora deve ser um valor entre 0 e 24");
-            }
-        }catch(Exception e){
+        } catch (NumberFormatException numberE) {
             throw new InputException("Hora deve ser um valor entre 0 e 24");
         }
 
-        atividade_escolhida = atividade.getSelectedItem().toString();
-        if (atividade_escolhida.equals(getString(R.string.nova_atividade))) {
-
-            nomeAtividade_db = nome_atividade.getText().toString();
-            if(nomeAtividade_db == null || nomeAtividade_db.trim().equals("")){
-                throw new InputException("Nome da Atividade Inválido!");
-            }
+        if( horas_db <= 0 || horas_db > 24){
+            throw new InputException("Hora deve ser um valor entre 0 e 24");
         }
-    }
 
-    //Prepara dados para BD
-    private void prepareData() {
-        String dia_db = getDate(dia.getValue());
-        int semana_db = getWeek(dia_db);
         TI ti_db = new TI(dia_db, semana_db, horas_db);
         Atividade atividade_db = null;
         int operation = INVALIDO;
 
+        atividade_escolhida = atividade.getSelectedItem().toString();
         if (atividade_escolhida.equals(getString(R.string.nova_atividade))) {
+            nomeAtividade_db = nome_atividade.getText().toString();
+            if(nomeAtividade_db.trim().equals("")){
+                throw new InputException("Nome da Atividade Inválido!");
+            }
 
             Categoria categoria_db = null;
             if(categoria.getValue() == TRABALHO) {
