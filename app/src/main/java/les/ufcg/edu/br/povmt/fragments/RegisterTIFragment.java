@@ -1,6 +1,7 @@
 package les.ufcg.edu.br.povmt.fragments;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -35,6 +36,7 @@ import les.ufcg.edu.br.povmt.models.Categoria;
 import les.ufcg.edu.br.povmt.models.InputException;
 import les.ufcg.edu.br.povmt.models.Prioridade;
 import les.ufcg.edu.br.povmt.models.TI;
+import les.ufcg.edu.br.povmt.utils.IonResume;
 
 
 /**
@@ -79,6 +81,11 @@ public class RegisterTIFragment extends DialogFragment {
     private SharedPreferences sharedPreferences;
     private long idUser;
     private TIPersister tiPersister;
+    private IonResume homeFragment;
+
+    public RegisterTIFragment(IonResume homeFragment) {
+        this.homeFragment = homeFragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -135,7 +142,9 @@ public class RegisterTIFragment extends DialogFragment {
                 }catch(InputException e){
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
+                homeFragment.atualizaLista();
                 dismiss();
+
             }
         });
 
@@ -226,7 +235,7 @@ public class RegisterTIFragment extends DialogFragment {
             }
 
             operation = INSERIR;
-            atividade_db = new Atividade(nomeAtividade_db, categoria_db, prioridade_db, tagAtividade_db);
+            atividade_db = new Atividade(nomeAtividade_db, categoria_db, prioridade_db, null);
         } else {
             operation = ATUALIZAR;
             atividade_db = mAtividade;

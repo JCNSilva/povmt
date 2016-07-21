@@ -33,6 +33,7 @@ import les.ufcg.edu.br.povmt.fragments.HistoryFragment;
 import les.ufcg.edu.br.povmt.fragments.HomeFragment;
 import les.ufcg.edu.br.povmt.fragments.RegisterTIFragment;
 import les.ufcg.edu.br.povmt.utils.CircleTransform;
+import les.ufcg.edu.br.povmt.utils.IonResume;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                RegisterTIFragment cdf = new RegisterTIFragment();
+                RegisterTIFragment cdf = new RegisterTIFragment(homeFragment);
                 cdf.show(ft, "dialog");
 //                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 //                CreateTIFragment cdf = new CreateTIFragment();

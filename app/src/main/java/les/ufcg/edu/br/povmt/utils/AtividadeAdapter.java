@@ -57,5 +57,7 @@ public class AtividadeAdapter extends RecyclerView.Adapter<AtividadeAdapter.Ativ
         }
     }
 
-
+    public List<Atividade> getmAtividades() {
+        return mAtividades;
+    }
 }
