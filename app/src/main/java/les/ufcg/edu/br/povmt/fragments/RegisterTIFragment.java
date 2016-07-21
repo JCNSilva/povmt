@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import les.ufcg.edu.br.povmt.R;
+import les.ufcg.edu.br.povmt.activities.SplashActivity;
 import les.ufcg.edu.br.povmt.database.AtividadePersister;
 import les.ufcg.edu.br.povmt.database.TIPersister;
 import les.ufcg.edu.br.povmt.models.Atividade;
@@ -95,8 +96,8 @@ public class RegisterTIFragment extends DialogFragment {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         sharedPreferences = getContext().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-//        idUser = Long.parseLong(sharedPreferences.getString("USER_ID",""));
-        idUser = 123456;
+        idUser = sharedPreferences.getLong(SplashActivity.USER_ID, 0);
+//        idUser = 123456;
         atividadePersister = new AtividadePersister(getContext());
         atividades = (ArrayList<Atividade>) atividadePersister.getAtividades(idUser);
 

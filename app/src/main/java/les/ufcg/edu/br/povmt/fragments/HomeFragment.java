@@ -1,6 +1,8 @@
 package les.ufcg.edu.br.povmt.fragments;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import les.ufcg.edu.br.povmt.R;
+import les.ufcg.edu.br.povmt.activities.SplashActivity;
 import les.ufcg.edu.br.povmt.database.AtividadePersister;
 import les.ufcg.edu.br.povmt.database.TIPersister;
 import les.ufcg.edu.br.povmt.models.Atividade;
@@ -40,13 +43,16 @@ public class HomeFragment extends Fragment implements IonResume {
     private TextView horas_investidas;
     private TIPersister tiPersister;
     public static AtividadeAdapter adapter;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        idUser = 123456;
+        sharedPreferences = getContext().getSharedPreferences(SplashActivity.PREFERENCE_NAME, Context.MODE_PRIVATE);
+        idUser = sharedPreferences.getLong(SplashActivity.USER_ID, 0);
+//        idUser = 123456;
         atividadePersister = new AtividadePersister(getContext());
         atividades = (ArrayList) atividadePersister.getAtividades(idUser);
         lista_atividades = (RecyclerView) view.findViewById(R.id.rview_atividades);

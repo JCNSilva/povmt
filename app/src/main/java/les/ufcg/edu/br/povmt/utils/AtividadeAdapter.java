@@ -38,8 +38,11 @@ public class AtividadeAdapter extends RecyclerView.Adapter<AtividadeAdapter.Ativ
 //        holder.categoria.setText(mAtividades.get(position).getCategoria().toString());
         int ti = mAtividades.get(position).getTI();
         holder.tempoInvestido.setText(String.valueOf(ti) + " horas");
-        holder.proporcao.setText((ti/getHorasInvestidas() * 100) + "%");
-
+        if (getHorasInvestidas() == 0) {
+            holder.proporcao.setText(0 + "%");
+        } else {
+            holder.proporcao.setText((ti/getHorasInvestidas() * 100) + "%");
+        }
     }
 
     @Override

@@ -71,7 +71,7 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
         signInButton.setOnClickListener(this);
 
         //
-        updateUI(true);
+//        updateUI(true);
     }
 
     private void signIn() {
@@ -89,20 +89,21 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
             String email = acct.getEmail();
             Uri foto_url = acct.getPhotoUrl();
             String id_user = acct.getId();
+            long id_user_long = id_user.hashCode();
 
             SharedPreferences sharedPreferences = getSharedPreferences(PREFERENCE_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
             editor.putString(USER_NOME, nome);
             editor.putString(USER_EMAIL, email);
-            editor.putString(USER_ID, id_user);
+            editor.putLong(USER_ID, id_user_long);
             Usuario user;
             if (foto_url != null) {
                 editor.putString(USER_URL_PHOTO, foto_url.toString());
-                user = new Usuario(Long.parseLong(id_user), nome, email, foto_url.toString());
+                user = new Usuario(id_user_long, nome, email, foto_url.toString());
             } else {
                 editor.putString(USER_URL_PHOTO, null);
-              user = new Usuario(Long.parseLong(id_user), nome, email, "");
+              user = new Usuario(id_user_long, nome, email, "");
             }
             UsuarioPersister userPersister = new  UsuarioPersister(getApplicationContext());
             userPersister.inserirUsuario(user);
