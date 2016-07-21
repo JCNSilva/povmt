@@ -185,7 +185,6 @@ public class RegisterTIFragment extends DialogFragment {
                 throw new InputException("Hora deve ser um valor entre 0 e 24");
             }
         }catch(Exception e){
-          //  Toast.makeText(getContext(), "Número de horas inválida", Toast.LENGTH_SHORT).show();
             throw new InputException("Hora deve ser um valor entre 0 e 24");
         }
 
@@ -194,14 +193,8 @@ public class RegisterTIFragment extends DialogFragment {
 
             nomeAtividade_db = nome_atividade.getText().toString();
             if(nomeAtividade_db == null || nomeAtividade_db.trim().equals("")){
-               // Toast.makeText(getContext(), "Nome de parâmetro inválido", Toast.LENGTH_SHORT).show();
                 throw new InputException("Nome da Atividade Inválido!");
             }
-
-            tagAtividade_db = tag.getText().toString();
-            /**if(tagAtividade_db == null || tagAtividade_db.trim().equals("")){
-                throw new InputException("Tag da Atividade Inválida!");
-            }**/
         }
     }
 
