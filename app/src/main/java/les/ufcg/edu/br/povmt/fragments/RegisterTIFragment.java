@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.honorato.multistatetogglebutton.MultiStateToggleButton;
 
@@ -31,6 +32,7 @@ import les.ufcg.edu.br.povmt.database.AtividadePersister;
 import les.ufcg.edu.br.povmt.database.TIPersister;
 import les.ufcg.edu.br.povmt.models.Atividade;
 import les.ufcg.edu.br.povmt.models.Categoria;
+import les.ufcg.edu.br.povmt.models.InputException;
 import les.ufcg.edu.br.povmt.models.Prioridade;
 import les.ufcg.edu.br.povmt.models.TI;
 
@@ -64,6 +66,11 @@ public class RegisterTIFragment extends DialogFragment {
     private TextView tag;
     private Button cancel;
     private Button ok;
+
+    private int horas_db;
+    private String nomeAtividade_db;
+    private String tagAtividade_db;
+    private String atividade_escolhida;
 
     private ArrayList<Atividade> atividades;
     private AtividadePersister atividadePersister;
@@ -122,7 +129,12 @@ public class RegisterTIFragment extends DialogFragment {
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                prepareData();
+                try{
+                    checkFields();
+                    prepareData();
+                }catch(InputException e){
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
                 dismiss();
             }
         });
@@ -166,19 +178,40 @@ public class RegisterTIFragment extends DialogFragment {
         layout_new_activity = (LinearLayout) view.findViewById(R.id.layout_new_activity);
     }
 
+    private void checkFields() throws InputException{
+        try{
+            horas_db = Integer.parseInt(String.valueOf(horas.getText()));
+            if( horas_db < 0 || horas_db > 24){
+                throw new InputException("Hora deve ser um valor entre 0 e 24");
+            }
+        }catch(Exception e){
+            throw new InputException("Hora deve ser um valor entre 0 e 24");
+        }
+
+        atividade_escolhida = atividade.getSelectedItem().toString();
+        if (atividade_escolhida.equals(getString(R.string.nova_atividade))) {
+
+            nomeAtividade_db = nome_atividade.getText().toString();
+            if(nomeAtividade_db == null || nomeAtividade_db.trim().equals("")){
+                throw new InputException("Nome da Atividade Inválido!");
+            }
+
+            tagAtividade_db = tag.getText().toString();
+            /**if(tagAtividade_db == null || tagAtividade_db.trim().equals("")){
+                throw new InputException("Tag da Atividade Inválida!");
+            }**/
+        }
+    }
+
     //Prepara dados para BD
     private void prepareData() {
         String dia_db = getDate(dia.getValue());
         int semana_db = getWeek(dia_db);
-        int horas_db = Integer.parseInt(String.valueOf(horas.getText()));
-
         TI ti_db = new TI(dia_db, semana_db, horas_db);
         Atividade atividade_db = null;
         int operation = INVALIDO;
 
-        String atividade_escolhida = atividade.getSelectedItem().toString();
         if (atividade_escolhida.equals(getString(R.string.nova_atividade))) {
-            String nome_db = nome_atividade.getText().toString();
 
             Categoria categoria_db = null;
             if(categoria.getValue() == TRABALHO) {
@@ -196,10 +229,9 @@ public class RegisterTIFragment extends DialogFragment {
             } else if (item_prioridade == ALTA) {
                 prioridade_db = Prioridade.ALTA;
             }
-            String tag_db = tag.getText().toString();
 
             operation = INSERIR;
-            atividade_db = new Atividade(nome_db,categoria_db, prioridade_db, tag_db);
+            atividade_db = new Atividade(nomeAtividade_db, categoria_db, prioridade_db, tagAtividade_db);
         } else {
             operation = ATUALIZAR;
             atividade_db = mAtividade;
