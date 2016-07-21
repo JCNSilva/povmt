@@ -3,6 +3,8 @@ package les.ufcg.edu.br.povmt.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.database.AtividadePersister;
 import les.ufcg.edu.br.povmt.models.Atividade;
+import les.ufcg.edu.br.povmt.utils.AtividadeAdapter;
 import les.ufcg.edu.br.povmt.utils.HomeListAdapter;
 
 /**
@@ -28,9 +31,10 @@ public class HomeFragment extends Fragment {
     private long idUser;
     private AtividadePersister atividadePersister;
     private ArrayList atividades;
-    private ListView lista_atividades;
+    private RecyclerView lista_atividades;
     private TextView lista_vazia;
-    private LinearLayout tabela;
+    private LinearLayout campo_atividades;
+    private TextView horas_investidas;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,19 +44,26 @@ public class HomeFragment extends Fragment {
         idUser = 123456;
         atividadePersister = new AtividadePersister(getContext());
         atividades = (ArrayList) atividadePersister.getAtividades(idUser);
-        lista_atividades = (ListView) view.findViewById(R.id.lista_atividades);
+        lista_atividades = (RecyclerView) view.findViewById(R.id.rview_atividades);
+        campo_atividades = (LinearLayout) view.findViewById(R.id.ll_atividades);
         lista_vazia = (TextView) view.findViewById(R.id.sem_ti);
-        tabela = (LinearLayout) view.findViewById(R.id.tabela);
+        horas_investidas = (TextView) view.findViewById(R.id.tv_horasinv_semana);
+
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        lista_atividades.setLayoutManager(llm);
+
+        //TODO Calcular TI na Semana
+        horas_investidas.setText("0");
 
         if (atividades.isEmpty()) {
             lista_vazia.setVisibility(View.VISIBLE);
-            tabela.setVisibility(View.GONE);
+            campo_atividades.setVisibility(View.GONE);
         } else {
             lista_vazia.setVisibility(View.GONE);
-            tabela.setVisibility(View.VISIBLE);
+            campo_atividades.setVisibility(View.VISIBLE);
         }
 
-        HomeListAdapter adapter = new HomeListAdapter(getContext(), atividades);
+        AtividadeAdapter adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
         lista_atividades.setAdapter(adapter);
 
         return view;

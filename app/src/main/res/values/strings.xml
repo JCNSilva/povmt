@@ -26,4 +26,5 @@
     <string name="confirmar">Confirmar</string>
     <string name="nova_atividade">Nova Atividade</string>
     <string name="tempo_investido">Tempo Investido</string>
+    <string name="horas_investidas">Horas investidas nessa semana</string>
 </resources>
