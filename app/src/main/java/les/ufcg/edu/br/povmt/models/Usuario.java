@@ -9,13 +9,13 @@ import java.util.List;
  */
 public class Usuario {
 
-    private long id;
+    private String id;
     private String nome;
     private String email;
     private String url;
     private List<Atividade> atividadeList;
 
-    public Usuario(final long id, String nome, String email, String url){
+    public Usuario(final String id, String nome, String email, String url){
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -23,11 +23,11 @@ public class Usuario {
         this.atividadeList = new ArrayList<>();
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

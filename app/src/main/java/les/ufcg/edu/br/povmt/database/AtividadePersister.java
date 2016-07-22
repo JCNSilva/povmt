@@ -48,7 +48,7 @@ public class AtividadePersister {
     }
 
 
-    public long inserirAtividade(Atividade atividade, long idUser) {
+    public long inserirAtividade(Atividade atividade, String idUser) {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(dbHelper.ATIVIDADE_NOME, atividade.getNome());
@@ -63,7 +63,7 @@ public class AtividadePersister {
     }
 
 
-    public long atualizarAtividade(Atividade atividade, long idUser) {
+    public long atualizarAtividade(Atividade atividade, String idUser) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(dbHelper.ATIVIDADE_NOME, atividade.getNome());
         contentValues.put(dbHelper.ATIVIDADE_CATEGORIA, atividade.getCategoria().toString());
@@ -82,7 +82,7 @@ public class AtividadePersister {
     }
 
 
-    public List<Atividade> getAtividades(long idUser) {
+    public List<Atividade> getAtividades(String idUser) {
         String[] columns = new String []{dbHelper.ATIVIDADE_ID, dbHelper.ATIVIDADE_NOME,
                 dbHelper.ATIVIDADE_CATEGORIA, dbHelper.ATIVIDADE_PRIORIDADE, dbHelper.ATIVIDADE_FOTO};
         Cursor cursor = getDatabase().query(dbHelper.ATIVIDADE_NOME_TABELA, columns,

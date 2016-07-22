@@ -3,12 +3,10 @@ package les.ufcg.edu.br.povmt.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -28,13 +26,13 @@ public class HistoryFragment extends Fragment {
     private AtividadePersister atividadePersister;
     private ArrayList atividades;
     private int idUser;
-    private RecyclerView lista_atividades1;
-    private TextView horas_investidas1;
-    private RecyclerView lista_atividades2;
-    private TextView horas_investidas2;
-    private RecyclerView lista_atividades3;
-    private TextView horas_investidas3;
-    private RecyclerView lista_atividades;
+    private RecyclerView listaAtividades1;
+    private TextView horasInvestidas1;
+    private RecyclerView listaAtividades2;
+    private TextView horasInvestidas2;
+    private RecyclerView listaAtividades3;
+    private TextView horasInvestidas3;
+    private RecyclerView listaAtividades;
     private AtividadeAdapter adapter;
 
     @Override
@@ -48,12 +46,12 @@ public class HistoryFragment extends Fragment {
 //
 //
 //        LinearLayoutManager llm = new LinearLayoutManager(getContext());
-//        lista_atividades.setLayoutManager(llm);
+//        listaAtividades.setLayoutManager(llm);
 //
 //        atividadePersister = new AtividadePersister(getContext());
 //        atividades = (ArrayList) atividadePersister.getAtividades(idUser);
 //        adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
-//        lista_atividades.setAdapter(adapter);
+//        listaAtividades.setAdapter(adapter);
 
         initViews(view);
         return view;
@@ -61,16 +59,16 @@ public class HistoryFragment extends Fragment {
 
     private void initViews(View view) {
         //Semana 1
-        lista_atividades1 = (RecyclerView) view.findViewById(R.id.rview_atividades1);
-        horas_investidas1 = (TextView) view.findViewById(R.id.tv_horasinv_semana1);
+        listaAtividades1 = (RecyclerView) view.findViewById(R.id.rview_atividades1);
+        horasInvestidas1 = (TextView) view.findViewById(R.id.tv_horasinv_semana1);
 
         //Semana 1
-        lista_atividades2 = (RecyclerView) view.findViewById(R.id.rview_atividades2);
-        horas_investidas2 = (TextView) view.findViewById(R.id.tv_horasinv_semana2);
+        listaAtividades2 = (RecyclerView) view.findViewById(R.id.rview_atividades2);
+        horasInvestidas2 = (TextView) view.findViewById(R.id.tv_horasinv_semana2);
 
         //Semana 1
-        lista_atividades3 = (RecyclerView) view.findViewById(R.id.rview_atividades3);
-        horas_investidas3 = (TextView) view.findViewById(R.id.tv_horasinv_semana3);
+        listaAtividades3 = (RecyclerView) view.findViewById(R.id.rview_atividades3);
+        horasInvestidas3 = (TextView) view.findViewById(R.id.tv_horasinv_semana3);
     }
 
 
@@ -80,7 +78,7 @@ public class HistoryFragment extends Fragment {
 ////        atividadePersister = new AtividadePersister(getContext());
 ////        atividades = (ArrayList) atividadePersister.getAtividades(idUser);
 ////        adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
-////        lista_atividades.setAdapter(adapter);
+////        listaAtividades.setAdapter(adapter);
 ////
 ////        //TODO Calcular TI na Semana
 ////        horas_investidas.setText(String.valueOf(getHorasInvestidas()) + " " + getString(R.string.horas_investidas));

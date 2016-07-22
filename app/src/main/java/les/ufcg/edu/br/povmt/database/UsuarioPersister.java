@@ -56,7 +56,7 @@ public class UsuarioPersister {
         contentValues.put(dbHelper.USUARIO_URL, usuario.getUrl());
 
         int linhasAfetadas = getDatabase().update(dbHelper.USUARIO_NOME_TABELA, contentValues,
-                dbHelper.USUARIO_ID + " = '" + String.valueOf(usuario.getId())
+                dbHelper.USUARIO_ID + " = '" + usuario.getId()
                         + "'", null);
 
         for(Atividade atividade: usuario.getAtividadeList()){
@@ -66,12 +66,12 @@ public class UsuarioPersister {
 
     }
 
-    public int deletarUsuario(long idUser) {
+    public int deletarUsuario(String idUser) {
         return getDatabase().delete(dbHelper.USUARIO_NOME_TABELA, dbHelper.USUARIO_ID +
                 " = '" + idUser + "'", null);
     }
 
-    public Usuario recuperarUsuario(long idUser) {
+    public Usuario recuperarUsuario(String idUser) {
         String[] columns = new String []{dbHelper.USUARIO_ID, dbHelper.USUARIO_NOME,
                 dbHelper.USUARIO_EMAIL, dbHelper.USUARIO_URL};
 
@@ -91,7 +91,7 @@ public class UsuarioPersister {
     }
 
     private Usuario createUsuario(Cursor cursor) {
-        Usuario model = new Usuario(cursor.getLong(cursor.getColumnIndex(dbHelper.USUARIO_ID)),
+        Usuario model = new Usuario(cursor.getString(cursor.getColumnIndex(dbHelper.USUARIO_ID)),
                 cursor.getString(cursor.getColumnIndex(dbHelper.USUARIO_NOME)),
                 cursor.getString(cursor.getColumnIndex(dbHelper.USUARIO_EMAIL)),
                 cursor.getString(cursor.getColumnIndex(dbHelper.USUARIO_URL)));

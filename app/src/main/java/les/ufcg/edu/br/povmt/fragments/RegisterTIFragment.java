@@ -1,13 +1,11 @@
 package les.ufcg.edu.br.povmt.fragments;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,24 +61,24 @@ public class RegisterTIFragment extends DialogFragment {
     private MultiStateToggleButton dia;
     private TextView horas;
     private Spinner atividade;
-    private TextView nome_atividade;
+    private TextView nomeAtividade;
     private MultiStateToggleButton categoria;
     private Spinner prioridade;
     private TextView tag;
     private Button cancel;
     private Button ok;
 
-    private int horas_db;
-    private String nomeAtividade_db;
-    private String tagAtividade_db;
-    private String atividade_escolhida;
+    private int horasDB;
+    private String nomeAtividadeDB;
+    private String tagAtividadeDB;
+    private String atividadeEscolhida;
 
     private ArrayList<Atividade> atividades;
     private AtividadePersister atividadePersister;
-    private LinearLayout layout_new_activity;
+    private LinearLayout layoutNewActivity;
     private Atividade mAtividade;
     private SharedPreferences sharedPreferences;
-    private long idUser;
+    private String idUser;
     private TIPersister tiPersister;
     private IonResume homeFragment;
 
@@ -96,7 +94,7 @@ public class RegisterTIFragment extends DialogFragment {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         sharedPreferences = getContext().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
-        idUser = sharedPreferences.getLong(SplashActivity.USER_ID, 0);
+        idUser = sharedPreferences.getString(SplashActivity.USER_ID, "");
 //        idUser = 123456;
         atividadePersister = new AtividadePersister(getContext());
         atividades = (ArrayList<Atividade>) atividadePersister.getAtividades(idUser);
@@ -122,9 +120,9 @@ public class RegisterTIFragment extends DialogFragment {
                 mAtividade = (Atividade) adapterView.getSelectedItem();
 
                 if (mAtividade.toString().equals(getString(R.string.nova_atividade))) {
-                    layout_new_activity.setVisibility(View.VISIBLE);
+                    layoutNewActivity.setVisibility(View.VISIBLE);
                 } else {
-                    layout_new_activity.setVisibility(View.GONE);
+                    layoutNewActivity.setVisibility(View.GONE);
                 }
             }
 
@@ -171,7 +169,7 @@ public class RegisterTIFragment extends DialogFragment {
 
         atividade = (Spinner) view.findViewById(R.id.atividade_spinner);
 
-        nome_atividade = (TextView) view.findViewById(R.id.nome_atv);
+        nomeAtividade = (TextView) view.findViewById(R.id.nome_atv);
         categoria = (MultiStateToggleButton) view.findViewById(R.id.switch_categoria);
         categoria.setStates(states);
         prioridade = (Spinner) view.findViewById(R.id.prioridade_spinner);
@@ -184,26 +182,26 @@ public class RegisterTIFragment extends DialogFragment {
         cancel = (Button) view.findViewById(R.id.btnCancel);
         ok = (Button) view.findViewById(R.id.btnOk);
 
-        layout_new_activity = (LinearLayout) view.findViewById(R.id.layout_new_activity);
+        layoutNewActivity = (LinearLayout) view.findViewById(R.id.layout_new_activity);
     }
 
     //Prepara dados para BD
     private void prepareData() throws InputException {
         String dia_db = getDate(dia.getValue());
         int semana_db = getWeek(dia_db);
-        horas_db = Integer.parseInt(String.valueOf(horas.getText()));
-        if( horas_db <= 0 || horas_db > 24){
+        horasDB = Integer.parseInt(String.valueOf(horas.getText()));
+        if( horasDB <= 0 || horasDB > 24){
             throw new InputException("Hora deve ser um valor entre 0 e 24");
         }
 
-        TI ti_db = new TI(dia_db, semana_db, horas_db);
+        TI ti_db = new TI(dia_db, semana_db, horasDB);
         Atividade atividade_db = null;
         int operation = INVALIDO;
 
-        atividade_escolhida = atividade.getSelectedItem().toString();
-        if (atividade_escolhida.equals(getString(R.string.nova_atividade))) {
-            nomeAtividade_db = nome_atividade.getText().toString();
-            if(nomeAtividade_db.trim().equals("")){
+        atividadeEscolhida = atividade.getSelectedItem().toString();
+        if (atividadeEscolhida.equals(getString(R.string.nova_atividade))) {
+            nomeAtividadeDB = nomeAtividade.getText().toString();
+            if(nomeAtividadeDB.trim().equals("")){
                 throw new InputException("Nome da Atividade Inválido!");
             }
             Categoria categoria_db = null;
@@ -224,7 +222,7 @@ public class RegisterTIFragment extends DialogFragment {
             }
 
             operation = INSERIR;
-            atividade_db = new Atividade(nomeAtividade_db, categoria_db, prioridade_db, null);
+            atividade_db = new Atividade(nomeAtividadeDB, categoria_db, prioridade_db, null);
         } else {
             operation = ATUALIZAR;
             atividade_db = mAtividade;

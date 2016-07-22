@@ -13,7 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     //------------------ INFORMAÇÕES GERAIS -----------------------
-    public static final int VERSAO_BD = 6;
+    public static final int VERSAO_BD = 7;
     public static final String NOME_DB = "POVMTDatabase";
 
 
@@ -26,7 +26,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String USUARIO_URL = "url";
     public static final String SQL_USUARIO_CRIAR_TABELA = "CREATE TABLE "
             + USUARIO_NOME_TABELA + "("
-            + USUARIO_ID + " INTEGER NOT NULL PRIMARY KEY, "
+            + USUARIO_ID + " TEXT NOT NULL PRIMARY KEY, "
             + USUARIO_NOME + " TEXT NOT NULL, "
             + USUARIO_EMAIL + " TEXT NOT NULL, "
             + USUARIO_URL + " TEXT NOT NULL);";
@@ -50,7 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + ATIVIDADE_CATEGORIA + " TEXT, "
             + ATIVIDADE_PRIORIDADE + " TEXT NOT NULL, "
             + ATIVIDADE_FOTO + " TEXT, "
-            + ATIVIDADE_USUARIO_FK + " INTEGER NOT NULL, "
+            + ATIVIDADE_USUARIO_FK + " TEXT NOT NULL, "
             + "FOREIGN KEY (" + ATIVIDADE_USUARIO_FK + ") REFERENCES "
             + USUARIO_NOME_TABELA + " (" + USUARIO_ID + ") "
             + "ON DELETE CASCADE ON UPDATE CASCADE);";

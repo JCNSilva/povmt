@@ -10,10 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,7 +22,6 @@ import les.ufcg.edu.br.povmt.database.AtividadePersister;
 import les.ufcg.edu.br.povmt.database.TIPersister;
 import les.ufcg.edu.br.povmt.models.Atividade;
 import les.ufcg.edu.br.povmt.utils.AtividadeAdapter;
-import les.ufcg.edu.br.povmt.utils.HomeListAdapter;
 import les.ufcg.edu.br.povmt.utils.IonResume;
 
 /**
@@ -34,13 +30,13 @@ import les.ufcg.edu.br.povmt.utils.IonResume;
 public class HomeFragment extends Fragment implements IonResume {
 
 
-    private long idUser;
+    private String idUser;
     private AtividadePersister atividadePersister;
     private ArrayList atividades;
-    private RecyclerView lista_atividades;
-    private TextView lista_vazia;
-    private LinearLayout campo_atividades;
-    private TextView horas_investidas;
+    private RecyclerView listaAtividades;
+    private TextView listaVazia;
+    private LinearLayout campoAtividades;
+    private TextView horasInvestidas;
     private TIPersister tiPersister;
     public static AtividadeAdapter adapter;
     private SharedPreferences sharedPreferences;
@@ -51,29 +47,29 @@ public class HomeFragment extends Fragment implements IonResume {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         sharedPreferences = getContext().getSharedPreferences(SplashActivity.PREFERENCE_NAME, Context.MODE_PRIVATE);
-        idUser = sharedPreferences.getLong(SplashActivity.USER_ID, 0);
+        idUser = sharedPreferences.getString(SplashActivity.USER_ID, "");
 //        idUser = 123456;
         atividadePersister = new AtividadePersister(getContext());
         atividades = (ArrayList) atividadePersister.getAtividades(idUser);
-        lista_atividades = (RecyclerView) view.findViewById(R.id.rview_atividades);
-        campo_atividades = (LinearLayout) view.findViewById(R.id.ll_atividades);
-        lista_vazia = (TextView) view.findViewById(R.id.sem_ti);
-        horas_investidas = (TextView) view.findViewById(R.id.tv_horasinv_semana);
+        listaAtividades = (RecyclerView) view.findViewById(R.id.rview_atividades);
+        campoAtividades = (LinearLayout) view.findViewById(R.id.ll_atividades);
+        listaVazia = (TextView) view.findViewById(R.id.sem_ti);
+        horasInvestidas = (TextView) view.findViewById(R.id.tv_horasinv_semana);
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        lista_atividades.setLayoutManager(llm);
+        listaAtividades.setLayoutManager(llm);
 
         atividadePersister = new AtividadePersister(getContext());
         atividades = (ArrayList) atividadePersister.getAtividades(idUser);
         adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
-        lista_atividades.setAdapter(adapter);
+        listaAtividades.setAdapter(adapter);
 
         if (atividades.isEmpty()) {
-            lista_vazia.setVisibility(View.VISIBLE);
-            campo_atividades.setVisibility(View.GONE);
+            listaVazia.setVisibility(View.VISIBLE);
+            campoAtividades.setVisibility(View.GONE);
         } else {
-            lista_vazia.setVisibility(View.GONE);
-            campo_atividades.setVisibility(View.VISIBLE);
+            listaVazia.setVisibility(View.GONE);
+            campoAtividades.setVisibility(View.VISIBLE);
         }
 
         return view;
@@ -85,10 +81,10 @@ public class HomeFragment extends Fragment implements IonResume {
         atividadePersister = new AtividadePersister(getContext());
         atividades = (ArrayList) atividadePersister.getAtividades(idUser);
         adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
-        lista_atividades.setAdapter(adapter);
+        listaAtividades.setAdapter(adapter);
 
         //TODO Calcular TI na Semana
-        horas_investidas.setText(String.valueOf(getHorasInvestidas()) + " " + getString(R.string.horas_investidas));
+        horasInvestidas.setText(String.valueOf(getHorasInvestidas()) + " " + getString(R.string.horas_investidas));
 
     }
 
