@@ -106,7 +106,11 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
               user = new Usuario(id_user_long, nome, email, "");
             }
             UsuarioPersister userPersister = new  UsuarioPersister(getApplicationContext());
-            userPersister.inserirUsuario(user);
+
+            int atualizacoes = userPersister.atualizarUsuario(user);
+            if(atualizacoes == 0) {
+                userPersister.inserirUsuario(user);
+            }
             editor.apply();
 
             updateUI(true);

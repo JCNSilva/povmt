@@ -48,7 +48,7 @@ public class UsuarioPersister {
         return id;
     }
 
-    public long atualizarUsuario(Usuario usuario) {
+    public int atualizarUsuario(Usuario usuario) {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(dbHelper.USUARIO_NOME, usuario.getNome());
@@ -60,7 +60,7 @@ public class UsuarioPersister {
                         + "'", null);
 
         for(Atividade atividade: usuario.getAtividadeList()){
-            linhasAfetadas += atividadePersister.atualizarAtividade(atividade, usuario.getId());
+            atividadePersister.atualizarAtividade(atividade, usuario.getId());
         }
         return linhasAfetadas;
 
