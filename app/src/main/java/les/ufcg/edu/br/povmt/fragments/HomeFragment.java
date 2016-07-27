@@ -21,15 +21,44 @@ import les.ufcg.edu.br.povmt.activities.SplashActivity;
 import les.ufcg.edu.br.povmt.database.AtividadePersister;
 import les.ufcg.edu.br.povmt.database.TIPersister;
 import les.ufcg.edu.br.povmt.models.Atividade;
+import les.ufcg.edu.br.povmt.models.Categoria;
+import les.ufcg.edu.br.povmt.models.Prioridade;
 import les.ufcg.edu.br.povmt.utils.AtividadeAdapter;
 import les.ufcg.edu.br.povmt.utils.IonResume;
+import les.ufcg.edu.br.povmt.utils.ServiceHandler;
+
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.widget.ArrayAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.SearchView;
+import android.widget.TextView;
+
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment implements IonResume {
 
-
+    private static String url = "http://lucasmatos.pythonanywhere.com/povmt/1/";
+    List<Atividade> atividadeList;
+    private static final int TRABALHO = 0;
+    private static final int LAZER = 1;
     private String idUser;
     private AtividadePersister atividadePersister;
     private ArrayList atividades;
@@ -71,20 +100,21 @@ public class HomeFragment extends Fragment implements IonResume {
             listaVazia.setVisibility(View.GONE);
             campoAtividades.setVisibility(View.VISIBLE);
         }
-
+        new GetaAtividade().execute();
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        atividadePersister = new AtividadePersister(getContext());
-        atividades = (ArrayList) atividadePersister.getAtividades(idUser);
-        adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
-        listaAtividades.setAdapter(adapter);
 
-        //TODO Calcular TI na Semana
-        horasInvestidas.setText(String.valueOf(getHorasInvestidas()) + " " + getString(R.string.horas_investidas));
+            atividadePersister = new AtividadePersister(getContext());
+            atividades = (ArrayList) atividadePersister.getAtividades(idUser);
+            adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
+            listaAtividades.setAdapter(adapter);
+
+            //TODO Calcular TI na Semana
+            horasInvestidas.setText(String.valueOf(getHorasInvestidas()) + " " + getString(R.string.horas_investidas));
 
     }
 
@@ -100,5 +130,65 @@ public class HomeFragment extends Fragment implements IonResume {
             horasInvestidas += atividadesList.get(i).getTI();
         }
         return horasInvestidas;
+    }
+
+
+    /**
+     * Async task class to get json by making HTTP call
+     */
+    private class GetaAtividade extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            /*pDialog = new ProgressDialog(getActivity());
+            pDialog.setMessage("Carregando ...");
+            pDialog.setCancelable(false);
+            pDialog.show();*/
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            // Creating service handler class instance
+            ServiceHandler sh = new ServiceHandler();
+
+            // Making a request to url and getting response
+            String json = sh.makeServiceCall(url, ServiceHandler.GET);
+
+            if (json != null) {
+                try {
+                    JSONArray atividades = new JSONArray(json);
+
+                    for (int i = 0; i < atividades.length(); i++) {
+                        JSONObject d = atividades.getJSONObject(i);
+                        Gson gson = new Gson();
+                        //disciplinaList.add(gson.fromJson(d.toString(), Disciplina.class));
+                        String TAG = "QuickNotesMainActivity";
+                        Log.d(TAG, d.getString("id"));
+                        Log.d(TAG, d.getString("nome"));
+                        Log.d(TAG, d.getString("url_imagem"));
+                        Log.d(TAG, d.getString("prioridade"));
+                        Log.d(TAG, d.getString("categoria"));
+                        Log.d(TAG, d.getString("categoria"));
+                        Log.d(TAG, d.getString("id_usuario"));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                Log.e("ServiceHandler", "Couldn't get any data from the url");
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            /*if (pDialog.isShowing())
+                pDialog.dismiss();*/
+
+        }
+
     }
 }
