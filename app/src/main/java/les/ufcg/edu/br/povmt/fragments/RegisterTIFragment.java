@@ -243,10 +243,8 @@ public class RegisterTIFragment extends DialogFragment {
     private void saveData(int operation, Atividade atv, TI ti) {
        if(operation == ATUALIZAR){
            tiPersister.inserirTI(ti, atv.getId());
-//           atv.addTI(ti);
            atividadePersister.atualizarAtividade(atv, idUser);
        }else if (operation == INSERIR){
-//           atv.addTI(ti);
            atividadePersister.inserirAtividade(atv, idUser);
            tiPersister.inserirTI(ti, atv.getId());
        }
@@ -264,6 +262,7 @@ public class RegisterTIFragment extends DialogFragment {
             return 0;
         }
     }
+
     private String getDate(int day) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Calendar  cal = Calendar.getInstance();
@@ -279,14 +278,6 @@ public class RegisterTIFragment extends DialogFragment {
             Date data_atual = cal.getTime();
             data_completa = dateFormat.format(data_atual);
         }
-
-//        //String para Date
-//        Date date = null;
-//        try {
-//            date = new SimpleDateFormat("dd/MM/yyyy").parse(data_completa);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
 
         return data_completa;
     }
