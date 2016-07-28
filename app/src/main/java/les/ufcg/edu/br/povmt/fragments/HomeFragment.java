@@ -78,8 +78,8 @@ public class HomeFragment extends Fragment implements IonResume {
         sharedPreferences = getContext().getSharedPreferences(SplashActivity.PREFERENCE_NAME, Context.MODE_PRIVATE);
         idUser = sharedPreferences.getString(SplashActivity.USER_ID, "");
 //        idUser = 123456;
-        atividadePersister = new AtividadePersister(getContext());
-        atividades = (ArrayList) atividadePersister.getAtividades(idUser);
+//        atividadePersister = new AtividadePersister(getContext());
+//        atividades = (ArrayList) atividadePersister.getAtividades(idUser);
         listaAtividades = (RecyclerView) view.findViewById(R.id.rview_atividades);
         campoAtividades = (LinearLayout) view.findViewById(R.id.ll_atividades);
         listaVazia = (TextView) view.findViewById(R.id.sem_ti);

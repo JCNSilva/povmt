@@ -81,6 +81,7 @@ public class RegisterTIFragment extends DialogFragment {
     private String idUser;
     private TIPersister tiPersister;
     private IonResume homeFragment;
+    private CharSequence hrs;
 
     public RegisterTIFragment(IonResume homeFragment) {
         this.homeFragment = homeFragment;
@@ -189,8 +190,15 @@ public class RegisterTIFragment extends DialogFragment {
     private void prepareData() throws InputException {
         String dia_db = getDate(dia.getValue());
         int semana_db = getWeek(dia_db);
-        horasDB = Integer.parseInt(String.valueOf(horas.getText()));
-        if( horasDB <= 0 || horasDB > 24){
+        hrs = horas.getText();
+
+        if (hrs.length() > 0) {
+            horasDB = Integer.parseInt(String.valueOf(horas.getText()));
+        } else {
+            throw new InputException("Hora deve ser um valor entre 0 e 24");
+        }
+
+        if( horasDB <= 0 || horasDB > 24 || hrs == null){
             throw new InputException("Hora deve ser um valor entre 0 e 24");
         }
 
