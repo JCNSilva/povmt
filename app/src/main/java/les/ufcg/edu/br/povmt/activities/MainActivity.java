@@ -1,5 +1,8 @@
 package les.ufcg.edu.br.povmt.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -7,6 +10,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -27,6 +31,8 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.squareup.picasso.Picasso;
 
+import java.util.Calendar;
+
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.fragments.AboutFragment;
 import les.ufcg.edu.br.povmt.fragments.ConfigurationsFragment;
@@ -43,6 +49,7 @@ public class MainActivity extends AppCompatActivity
     private static final String HISTORY_TAG = "HISTORY_TAG";
     private static final String ABOUT_TAG = "ABOUT_TAG";
     private static final String CONFIG_TAG = "CONFIG_TAG";
+    public static final String ACTION = "com.example.android.receivers.NOTIFICATION_ALARM";
 
     private SharedPreferences sharedPreferences;
     private TextView nameUsr;
@@ -75,6 +82,7 @@ public class MainActivity extends AppCompatActivity
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+        notificar(15, 8);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -269,5 +277,24 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+
+
+    public void notificar(int hora, int minuto) {
+        Calendar calNow = Calendar.getInstance();
+        Calendar calSet = (Calendar) calNow.clone();
+        calSet.setTimeInMillis(System.currentTimeMillis());
+        calSet.add(Calendar.SECOND, 7);
+
+        setAlarm(calSet);
+    }
+
+    private void setAlarm(Calendar targetCall) {
+        Intent intent = new Intent(ACTION);
+        PendingIntent pendingintent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        long time = targetCall.getTimeInMillis();
+        alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingintent);
+        Log.d("Script", alarmManager.toString());
     }
 }

@@ -93,7 +93,7 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
         signInButton.setOnClickListener(this);
 
         //
-//        updateUI(true);
+        updateUI(true);
     }
 
     private void signIn() {
