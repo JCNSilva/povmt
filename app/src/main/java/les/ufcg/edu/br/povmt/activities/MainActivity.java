@@ -29,6 +29,7 @@ import com.squareup.picasso.Picasso;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.fragments.AboutFragment;
+import les.ufcg.edu.br.povmt.fragments.ConfigurationsFragment;
 import les.ufcg.edu.br.povmt.fragments.HistoryFragment;
 import les.ufcg.edu.br.povmt.fragments.HomeFragment;
 import les.ufcg.edu.br.povmt.fragments.RegisterTIFragment;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity
     public static final String HOME_TAG = "HOME_TAG";
     private static final String HISTORY_TAG = "HISTORY_TAG";
     private static final String ABOUT_TAG = "ABOUT_TAG";
+    private static final String CONFIG_TAG = "CONFIG_TAG";
 
     private SharedPreferences sharedPreferences;
     private TextView nameUsr;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     private HomeFragment homeFragment;
     private HistoryFragment historyFragment;
     private AboutFragment aboutFragment;
+    private ConfigurationsFragment configFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +118,7 @@ public class MainActivity extends AppCompatActivity
         homeFragment = new HomeFragment();
         historyFragment = new HistoryFragment();
         aboutFragment = new AboutFragment();
+        configFragment = new ConfigurationsFragment();
 
         currentFragment = homeFragment;
 
@@ -204,6 +208,18 @@ public class MainActivity extends AppCompatActivity
                 }
                 currentFragment = historyFragment;
                 lastFragment = R.id.nav_history;
+                break;
+            case R.id.nav_config:
+                getSupportActionBar().setTitle(getString(R.string.config));
+                if (fragmentManager.findFragmentByTag(CONFIG_TAG) == null) {
+                    fragmentTransaction.hide(currentFragment);
+                    fragmentTransaction.add(R.id.fragment_container, configFragment, CONFIG_TAG);
+                    fragmentTransaction.show(configFragment).commit();
+                } else if (!fragmentManager.findFragmentByTag(HISTORY_TAG).isVisible()) {
+                    fragmentTransaction.hide(currentFragment).show(configFragment).commit();
+                }
+                currentFragment = configFragment;
+                lastFragment = R.id.nav_config;
                 break;
             case R.id.nav_about:
                 getSupportActionBar().setTitle(getString(R.string.sobre));

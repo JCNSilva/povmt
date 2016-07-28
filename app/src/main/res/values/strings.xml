@@ -10,6 +10,7 @@
     <string name="semana_atual">Semana Atual</string>
     <string name="historico">Histórico</string>
     <string name="sobre">Sobre</string>
+    <string name="config">Configurações</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
