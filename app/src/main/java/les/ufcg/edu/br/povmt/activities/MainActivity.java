@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity
     private HistoryFragment historyFragment;
     private AboutFragment aboutFragment;
     private ConfigurationsFragment configFragment;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -144,6 +145,13 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void hideIcons() {
+        if (currentFragment != homeFragment) {
+            fab.setVisibility(View.GONE);
+        } else {
+            fab.setVisibility(View.VISIBLE);
+        }
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -243,6 +251,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
         }
+        hideIcons();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
