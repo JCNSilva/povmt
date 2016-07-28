@@ -2,7 +2,6 @@ package les.ufcg.edu.br.povmt.activities;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -40,7 +39,6 @@ import les.ufcg.edu.br.povmt.fragments.HistoryFragment;
 import les.ufcg.edu.br.povmt.fragments.HomeFragment;
 import les.ufcg.edu.br.povmt.fragments.RegisterTIFragment;
 import les.ufcg.edu.br.povmt.utils.CircleTransform;
-import les.ufcg.edu.br.povmt.utils.IonResume;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
@@ -83,7 +81,10 @@ public class MainActivity extends AppCompatActivity
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        notificar(15, 8);
+        if (ConfigurationsFragment.notificacaoAtiva) {
+            Log.d("Script", "ENTROU!!");
+            notificar(01, 22);
+        }
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -293,17 +294,19 @@ public class MainActivity extends AppCompatActivity
         Calendar calNow = Calendar.getInstance();
         Calendar calSet = (Calendar) calNow.clone();
         calSet.setTimeInMillis(System.currentTimeMillis());
-        calSet.add(Calendar.SECOND, 7);
+        calSet.set(Calendar.HOUR_OF_DAY, hora);
+        calSet.set(Calendar.MINUTE, minuto);
+        calSet.set(Calendar.SECOND, 0);
+        calSet.set(Calendar.MILLISECOND, 0);
 
-        setAlarm(calSet);
+        setAlarme(calSet);
     }
 
-    private void setAlarm(Calendar targetCall) {
+    private void setAlarme(Calendar calendar) {
         Intent intent = new Intent(ACTION);
         PendingIntent pendingintent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-        long time = targetCall.getTimeInMillis();
+        long time = calendar.getTimeInMillis();
         alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingintent);
-        Log.d("Script", alarmManager.toString());
     }
 }

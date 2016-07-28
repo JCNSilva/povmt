@@ -18,6 +18,8 @@ import les.ufcg.edu.br.povmt.R;
  * Created by Veruska on 27/07/2016.
  */
 public class ConfigurationsFragment extends Fragment{
+    public static boolean notificacaoAtiva = true;
+
     public ConfigurationsFragment() {
         // Required empty public constructor
     }
