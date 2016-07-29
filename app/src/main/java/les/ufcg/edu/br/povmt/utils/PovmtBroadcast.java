@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.app.TaskStackBuilder;
+import android.os.Vibrator;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
@@ -29,6 +30,9 @@ public class PovmtBroadcast extends BroadcastReceiver {
 
                             .setContentText("Ei! Você não cadastrou nenhuma TI ontem!");
             Intent resultIntent = new Intent(context, MainActivity.class);
+
+            Vibrator v = (Vibrator)context.getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(1000);
 
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
             stackBuilder.addParentStack(MainActivity.class);
