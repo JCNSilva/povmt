@@ -19,7 +19,8 @@ import java.util.List;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.activities.SplashActivity;
-import les.ufcg.edu.br.povmt.database.AtividadePersister;
+//import les.ufcg.edu.br.povmt.database.AtividadePersister;
+import les.ufcg.edu.br.povmt.database.DataSource;
 import les.ufcg.edu.br.povmt.models.Atividade;
 import les.ufcg.edu.br.povmt.utils.AtividadeAdapter;
 import les.ufcg.edu.br.povmt.utils.HistoryAdapter;
@@ -31,7 +32,7 @@ import les.ufcg.edu.br.povmt.utils.IonResume;
 public class HistoryFragment extends Fragment implements IonResume {
 
 
-    private AtividadePersister atividadePersister;
+    private DataSource atividadePersister;
     private ArrayList atividades;
     private String idUser;
     private RecyclerView listaAtividades1;
@@ -48,6 +49,7 @@ public class HistoryFragment extends Fragment implements IonResume {
     private HistoryAdapter adapter3;
     private LinearLayoutManager llm;
     private LinearLayoutManager llm1;
+    private DataSource dataSource;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,7 +61,7 @@ public class HistoryFragment extends Fragment implements IonResume {
 
         initViews(view);
 
-        atividadePersister = new AtividadePersister(getContext());
+        dataSource = DataSource.getInstance(getContext());
         atividades = (ArrayList) atividadePersister.getAtividades(idUser);
 
         adapter1 = new HistoryAdapter(getContext(), new ArrayList<Atividade>(atividades), getSemanaAtual());
@@ -99,7 +101,8 @@ public class HistoryFragment extends Fragment implements IonResume {
     public void onResume() {
         super.onResume();
 
-        atividadePersister = new AtividadePersister(getContext());
+//        atividadePersister = AtividadePersister.getInstance(getContext());
+        dataSource = DataSource.getInstance(getContext());
         atividades = (ArrayList) atividadePersister.getAtividades(idUser);
 
         adapter1 = new HistoryAdapter(getContext(), new ArrayList<Atividade>(atividades), getSemanaAtual());

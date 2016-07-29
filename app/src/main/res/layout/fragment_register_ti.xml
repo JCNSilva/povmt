@@ -149,7 +149,9 @@
                             android:layout_height="wrap_content"
                             android:id="@+id/nome_atv"
                             android:layout_gravity="center_vertical"
-                            android:layout_column="1" />
+                            android:layout_column="1"
+                            android:maxLength="12"
+                            android:maxLines="1" />
                     </TableRow>
 
                     <TableRow

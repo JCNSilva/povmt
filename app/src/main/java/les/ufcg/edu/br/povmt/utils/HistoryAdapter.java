@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 
 import les.ufcg.edu.br.povmt.R;
-import les.ufcg.edu.br.povmt.database.TIPersister;
+import les.ufcg.edu.br.povmt.database.DataSource;
 import les.ufcg.edu.br.povmt.models.Atividade;
 import les.ufcg.edu.br.povmt.models.TI;
 
@@ -46,8 +46,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.Atividad
 //        holder.prioridade.setText(mAtividades.get(position).getPrioridade().toString());
 //        holder.categoria.setText(mAtividades.get(position).getCategoria().toString());
 
-        TIPersister tiPersister = new TIPersister(context);
-        List<TI> tis = tiPersister.getTISemana(atv.getId(), semana);
+        DataSource dataSource = DataSource.getInstance(context);
+        List<TI> tis = dataSource.getTISemana(atv.getId(), semana);
         atv.setTiList(tis);
 
         int ti = atv.getTI();
@@ -55,7 +55,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.Atividad
         if (getHorasInvestidas() == 0) {
             holder.proporcao.setText(0 + "%");
         } else {
-            holder.proporcao.setText((ti/getHorasInvestidas() * 100) + "%");
+            String valor = String.format("%.2f", (ti/getHorasInvestidas() * 100));
+            holder.proporcao.setText(valor + "%");
         }
     }
 

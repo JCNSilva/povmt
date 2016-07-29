@@ -18,36 +18,21 @@ import java.util.List;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.activities.SplashActivity;
-import les.ufcg.edu.br.povmt.database.AtividadePersister;
-import les.ufcg.edu.br.povmt.database.TIPersister;
+//import les.ufcg.edu.br.povmt.database.AtividadePersister;
+import les.ufcg.edu.br.povmt.database.DataSource;
 import les.ufcg.edu.br.povmt.models.Atividade;
-import les.ufcg.edu.br.povmt.models.Categoria;
-import les.ufcg.edu.br.povmt.models.Prioridade;
 import les.ufcg.edu.br.povmt.utils.AtividadeAdapter;
 import les.ufcg.edu.br.povmt.utils.IonResume;
 import les.ufcg.edu.br.povmt.utils.ServiceHandler;
 
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.widget.ArrayAdapter;
-import android.widget.ExpandableListAdapter;
-import android.widget.ExpandableListView;
-import android.widget.SearchView;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -60,15 +45,15 @@ public class HomeFragment extends Fragment implements IonResume {
     private static final int TRABALHO = 0;
     private static final int LAZER = 1;
     private String idUser;
-    private AtividadePersister atividadePersister;
+//    private AtividadePersister atividadePersister;
     private ArrayList atividades;
     private RecyclerView listaAtividades;
     private TextView listaVazia;
     private LinearLayout campoAtividades;
     private TextView horasInvestidas;
-    private TIPersister tiPersister;
     public static AtividadeAdapter adapter;
     private SharedPreferences sharedPreferences;
+    private DataSource dataSource;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,8 +73,10 @@ public class HomeFragment extends Fragment implements IonResume {
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         listaAtividades.setLayoutManager(llm);
 
-        atividadePersister = new AtividadePersister(getContext());
-        atividades = (ArrayList) atividadePersister.getAtividades(idUser);
+//        atividadePersister = AtividadePersister.getInstance(getContext());
+        dataSource = DataSource.getInstance(getContext());
+
+        atividades = (ArrayList) dataSource.getAtividades(idUser);
         adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
         listaAtividades.setAdapter(adapter);
 
@@ -108,8 +95,9 @@ public class HomeFragment extends Fragment implements IonResume {
     public void onResume() {
         super.onResume();
 
-            atividadePersister = new AtividadePersister(getContext());
-            atividades = (ArrayList) atividadePersister.getAtividades(idUser);
+//            atividadePersister = AtividadePersister.getInstance(getContext());
+        dataSource = DataSource.getInstance(getContext());
+            atividades = (ArrayList) dataSource.getAtividades(idUser);
             adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
             listaAtividades.setAdapter(adapter);
 

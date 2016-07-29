@@ -1,6 +1,5 @@
 package les.ufcg.edu.br.povmt.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -9,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -27,7 +25,6 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -38,9 +35,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import les.ufcg.edu.br.povmt.R;
-import les.ufcg.edu.br.povmt.database.UsuarioPersister;
+import les.ufcg.edu.br.povmt.database.DataSource;
 import les.ufcg.edu.br.povmt.models.Usuario;
-import les.ufcg.edu.br.povmt.utils.ServiceHandler;
 
 public class SplashActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
     Usuario user;
@@ -126,11 +122,11 @@ public class SplashActivity extends AppCompatActivity implements GoogleApiClient
                 editor.putString(USER_URL_PHOTO, null);
               user = new Usuario(id_user, nome, email, "");
             }
-            UsuarioPersister userPersister = new  UsuarioPersister(getApplicationContext());
+            DataSource dataSource = DataSource.getInstance(getApplicationContext());
 
-            int atualizacoes = userPersister.atualizarUsuario(user);
+            int atualizacoes = dataSource.atualizarUsuario(user);
             if(atualizacoes == 0) {
-                userPersister.inserirUsuario(user);
+                dataSource.inserirUsuario(user);
             }
             editor.apply();
             new HttpAsyncTask().execute(url);

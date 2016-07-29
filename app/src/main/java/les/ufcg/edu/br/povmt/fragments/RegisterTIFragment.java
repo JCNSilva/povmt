@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +26,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.activities.SplashActivity;
-import les.ufcg.edu.br.povmt.database.AtividadePersister;
-import les.ufcg.edu.br.povmt.database.TIPersister;
+//import les.ufcg.edu.br.povmt.database.AtividadePersister;
+import les.ufcg.edu.br.povmt.database.DataSource;
 import les.ufcg.edu.br.povmt.models.Atividade;
 import les.ufcg.edu.br.povmt.models.Categoria;
 import les.ufcg.edu.br.povmt.models.InputException;
@@ -74,14 +76,14 @@ public class RegisterTIFragment extends DialogFragment {
     private String atividadeEscolhida;
 
     private ArrayList<Atividade> atividades;
-    private AtividadePersister atividadePersister;
+//    private AtividadePersister atividadePersister;
     private LinearLayout layoutNewActivity;
     private Atividade mAtividade;
     private SharedPreferences sharedPreferences;
     private String idUser;
-    private TIPersister tiPersister;
     private IonResume homeFragment;
     private CharSequence hrs;
+    private DataSource dataSource;
 
     public RegisterTIFragment(IonResume homeFragment) {
         this.homeFragment = homeFragment;
@@ -97,10 +99,10 @@ public class RegisterTIFragment extends DialogFragment {
         sharedPreferences = getContext().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
         idUser = sharedPreferences.getString(SplashActivity.USER_ID, "");
 //        idUser = 123456;
-        atividadePersister = new AtividadePersister(getContext());
-        atividades = (ArrayList<Atividade>) atividadePersister.getAtividades(idUser);
+//        atividadePersister = AtividadePersister.getInstance(getContext());
+        dataSource = DataSource.getInstance(getContext());
+        atividades = (ArrayList<Atividade>) dataSource.getAtividades(idUser);
 
-        tiPersister = new TIPersister(getContext());
 
         initViews(view);
         listeners();
@@ -138,8 +140,8 @@ public class RegisterTIFragment extends DialogFragment {
             public void onClick(View v) {
                 try{
                     prepareData();
-                    homeFragment.atualizaLista();
                     dismiss();
+                    homeFragment.atualizaLista();
                 }catch(InputException e){
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -241,15 +243,34 @@ public class RegisterTIFragment extends DialogFragment {
 
     //Salva no BD
     private void saveData(int operation, Atividade atv, TI ti) {
+        Log.d("TESTEBD1", String.valueOf(dataSource.getAtividades(idUser)));
        if(operation == ATUALIZAR){
-           tiPersister.inserirTI(ti, atv.getId());
-//           atv.addTI(ti);
-           atividadePersister.atualizarAtividade(atv, idUser);
+           dataSource.inserirTI(ti, atv.getId());
+           dataSource.atualizarAtividade(atv, idUser);
        }else if (operation == INSERIR){
-//           atv.addTI(ti);
-           atividadePersister.inserirAtividade(atv, idUser);
-           tiPersister.inserirTI(ti, atv.getId());
+           long atvId = dataSource.inserirAtividade(atv, idUser);
+           dataSource.inserirTI(ti, atvId);
+//           dataSource.atualizarAtividade(atv, idUser);
+//           dataSource.getTI(tiId);
+           saveData(ATUALIZAR, dataSource.getAtividade(atvId),ti);
+//           Log.d("TESTEBD3", String.valueOf(dataSource.getTI(tiId)));
+//           Log.d("TESTEBD4", String.valueOf(dataSource.getTIs(atvId)));
+
+
+           // Se der loop comenta esse if
+           if (dataSource.getAtividades(idUser).isEmpty()) {
+               saveData(operation, atv, ti);
+
+               Log.d("TESTEBD2", String.valueOf(dataSource.getAtividades(idUser)));
+           }
+
        }
+
+
+
+//        Log.d("TESTEBD2", String.valueOf(dataSource.getTI(ti.getId()).getId()));
+//        Log.d("TESTEBD3", String.valueOf(tiPersister.getTIs(atv.getId())));
+//        Log.d("TESTEBD4", String.valueOf(atividadePersister.getAtividade(atv.getId())));
     }
 
     private int getWeek(String day) {

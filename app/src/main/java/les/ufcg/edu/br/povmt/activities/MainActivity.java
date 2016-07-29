@@ -77,6 +77,8 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
 
+        setUpFragments();
+
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity
         imgUsr = (ImageView) headerLayout.findViewById(R.id.imgUsr);
 
         setUpViewsDrawer();
-        setUpFragments();
+//        setUpFragments();
     }
 
 
@@ -127,6 +129,8 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, homeFragment, HOME_TAG);
         fragmentTransaction.commit();
+
+//        homeFragment.atualizaLista();
     }
 
     private void setUpViewsDrawer(){
