@@ -30,4 +30,8 @@ public class ConfigurationsFragment extends Fragment{
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_configuration, container, false);
     }
+
+    public static void setNotificacaoAtiva(boolean notificacaoAtiva) {
+        ConfigurationsFragment.notificacaoAtiva = notificacaoAtiva;
+    }
 }
