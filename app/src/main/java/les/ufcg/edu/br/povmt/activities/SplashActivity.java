@@ -7,7 +7,21 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -22,7 +36,9 @@ import org.apache.http.NameValuePair;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.database.DataSource;
@@ -120,10 +136,10 @@ public class SplashActivity extends AppCompatActivity implements
             DataSource dataSource = DataSource.getInstance(getApplicationContext());
 
             persistUserInformation(user);
-            int atualizacoes = dataSource.atualizarUsuario(user);
+            /*int atualizacoes = dataSource.atualizarUsuario(user);
             if(atualizacoes == 0) {
                 dataSource.inserirUsuario(user);
-            }
+            }*/
             editor.apply();
             goToMainPage(true);
 
@@ -136,12 +152,12 @@ public class SplashActivity extends AppCompatActivity implements
         DataSource dataSource = DataSource.getInstance(getApplicationContext());
 
         int atualizacoes = dataSource.atualizarUsuario(usuario);
-        if(atualizacoes == 0) {
-            dataSource.inserirUsuario(usuario);
-        }
 
-        try {
-            String json = "";
+        if(atualizacoes == 0) { //O usuário não existia previamente
+            dataSource.inserirUsuario(usuario);
+
+            try {
+            /*String json = "";
             JSONObject jsonObject = new JSONObject();
             jsonObject.accumulate("id", user.getId());
             jsonObject.accumulate("nome", user.getNome());
@@ -149,9 +165,56 @@ public class SplashActivity extends AppCompatActivity implements
             jsonObject.accumulate("url_foto", user.getUrl());
             json = jsonObject.toString();
 
-            new HttpPostAsyncTask().execute(URL_CRIAR_USUARIO, json);}
-        catch(Exception e) {
-            Log.d("JsonObject", e.getLocalizedMessage());
+            new HttpPostAsyncTask().execute(URL_CRIAR_USUARIO, json);*/
+
+            RequestQueue queue = Volley.newRequestQueue(this);
+            StringRequest cadastroRequest = new StringRequest(Request.Method.POST, URL_CRIAR_USUARIO,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.d("Volley", response);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            NetworkResponse response = error.networkResponse;
+                            if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+                                Log.e("Volley", "Erro!");
+                            } else if (error instanceof AuthFailureError) {
+                                Log.e("Volley", "Erro!");
+                            } else if (error instanceof ServerError) {
+                                Log.e("Volley", "Erro!");
+                            } else if (error instanceof NetworkError) {
+                                Log.e("Volley", "Erro!");
+                            } else if (error instanceof ParseError) {
+                                Log.e("Volley", "Erro!");
+                            }
+                        }
+                    }) {
+
+                @Override
+                protected Map<String, String> getParams()
+                {
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("id", user.getId());
+                    params.put("nome", user.getNome());
+                    params.put("email", user.getEmail());
+                    params.put("url_foto", user.getUrl());
+
+                    return params;
+                }
+            };
+
+                queue.add(cadastroRequest);
+
+
+            } catch(Exception e) {
+                Log.d("JsonObject", e.getLocalizedMessage());
+            }
+
+        } else { //O usuário já existia
+
         }
     }
 

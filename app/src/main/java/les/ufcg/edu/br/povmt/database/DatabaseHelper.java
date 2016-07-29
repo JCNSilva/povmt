@@ -13,7 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     //------------------ INFORMAÇÕES GERAIS -----------------------
-    public static final int VERSAO_BD = 7;
+    public static final int VERSAO_BD = 9;
     public static final String NOME_DB = "POVMTDatabase";
 
 
@@ -24,12 +24,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String USUARIO_NOME = "nome";
     public static final String USUARIO_EMAIL = "email";
     public static final String USUARIO_URL = "url";
+    public static final String USUARIO_HORA_MODIFICACAO = "horaModificacao";
+
     public static final String SQL_USUARIO_CRIAR_TABELA = "CREATE TABLE "
             + USUARIO_NOME_TABELA + "("
             + USUARIO_ID + " TEXT NOT NULL PRIMARY KEY, "
             + USUARIO_NOME + " TEXT NOT NULL, "
             + USUARIO_EMAIL + " TEXT NOT NULL, "
-            + USUARIO_URL + " TEXT NOT NULL);";
+            + USUARIO_URL + " TEXT NOT NULL, "
+            + USUARIO_HORA_MODIFICACAO + " TEXT);";
+
     public static final String SQL_USUARIO_DELETAR_TABELA = "DROP TABLE IF EXISTS "
             + USUARIO_NOME_TABELA + ";";
 
@@ -42,7 +46,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String ATIVIDADE_CATEGORIA = "categoria";
     public static final String ATIVIDADE_PRIORIDADE = "prioridade";
     public static final String ATIVIDADE_FOTO = "foto";
+    public static final String ATIVIDADE_HORA_MODIFICACAO = "horaModificacao";
     public static final String ATIVIDADE_USUARIO_FK = "usuario";
+
     public static final String SQL_ATIVIDADE_CRIAR_TABELA = "CREATE TABLE "
             + ATIVIDADE_NOME_TABELA + "("
             + ATIVIDADE_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
@@ -50,10 +56,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             + ATIVIDADE_CATEGORIA + " TEXT, "
             + ATIVIDADE_PRIORIDADE + " TEXT NOT NULL, "
             + ATIVIDADE_FOTO + " TEXT, "
+            + ATIVIDADE_HORA_MODIFICACAO + " TEXT, "
             + ATIVIDADE_USUARIO_FK + " TEXT NOT NULL, "
             + "FOREIGN KEY (" + ATIVIDADE_USUARIO_FK + ") REFERENCES "
             + USUARIO_NOME_TABELA + " (" + USUARIO_ID + ") "
             + "ON DELETE CASCADE ON UPDATE CASCADE);";
+
     public static final String SQL_ATIVIDADE_DELETAR_TABELA = "DROP TABLE IF EXISTS "
             + ATIVIDADE_NOME_TABELA + ";";
 
@@ -65,17 +73,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String TI_DATA = "data";
     public static final String TI_SEMANA = "semana";
     public static final String TI_HORAS = "horas";
+    public static final String TI_HORA_MODIFICACAO = "horaModificacao";
     public static final String TI_ATIVIDADE_FK = "atividade";
+
     public static final String SQL_TI_CRIAR_TABELA = "CREATE TABLE "
             + TI_NOME_TABELA + "("
             + TI_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
             + TI_DATA + " TEXT NOT NULL, "
             + TI_SEMANA + " INTEGER NOT NULL, "
             + TI_HORAS + " INTEGER NOT NULL, "
+            + TI_HORA_MODIFICACAO + " TEXT, "
             + TI_ATIVIDADE_FK + " INTEGER NOT NULL, "
             + "FOREIGN KEY (" + TI_ATIVIDADE_FK + ") REFERENCES "
             + ATIVIDADE_NOME_TABELA + " (" + ATIVIDADE_ID + ") "
             + "ON DELETE CASCADE ON UPDATE CASCADE);";
+
     public static final String SQL_TI_DELETAR_TABELA = "DROP TABLE IF EXISTS "
             + TI_NOME_TABELA + ";";
 
@@ -84,32 +96,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //-----------------------TABELA DE TAGS -----------------------
     public static final String TAG_NOME_TABELA = "tabTag";
     public static final String TAG_NOME = "nome";
+    public static final String TAG_HORA_MODIFICADA = "horaModificada";
+    public static final String TAG_ATIVIDADE_FK = "atividade";
+
     public static final String SQL_TAG_CRIAR_TABELA = "CREATE TABLE "
             + TAG_NOME_TABELA + "("
-            + TAG_NOME + " TEXT NOT NULL PRIMARY KEY);";
+            + TAG_NOME + " TEXT NOT NULL, "
+            + TAG_HORA_MODIFICADA + " TEXT, "
+            + TAG_ATIVIDADE_FK + " INTEGER NOT NULL, "
+            + "FOREIGN KEY (" + TAG_ATIVIDADE_FK + ") REFERENCES "
+            + ATIVIDADE_NOME_TABELA + " (" + ATIVIDADE_ID + ") "
+            + "ON DELETE CASCADE ON UPDATE CASCADE, "
+            + "PRIMARY KEY(" + TAG_NOME + ", " + TAG_ATIVIDADE_FK + "));";
+
     public static final String SQL_TAG_DELETAR_TABELA  = "DROP TABLE IF EXISTS "
             + TAG_NOME_TABELA + ";";
 
 
-
-
-    //-----------------------TABELA TAG-ATIVIDADE ------------------
-    public static final String TAGATIVIDADE_NOME_TABELA = "tagAtividadeTab";
-    public static final String TAGATIVIDADE_TAG_FK = "tag";
-    public static final String TAGATIVIDADE_ATIVIDADE_FK = "atividade";
-    public static final String SQL_TAGATIVIDADE_CRIAR_TABELA = "CREATE TABLE "
-            + TAGATIVIDADE_NOME_TABELA + "("
-            + TAGATIVIDADE_TAG_FK + " INTEGER NOT NULL, "
-            + TAGATIVIDADE_ATIVIDADE_FK + " INTEGER NOT NULL, "
-            + "FOREIGN KEY (" + TAGATIVIDADE_TAG_FK + ") REFERENCES "
-            + TAG_NOME_TABELA + " (" + TAG_NOME + ") "
-            + "ON DELETE CASCADE ON UPDATE CASCADE, "
-            + "FOREIGN KEY (" + TAGATIVIDADE_ATIVIDADE_FK + ") REFERENCES "
-            + ATIVIDADE_NOME_TABELA + " (" + ATIVIDADE_ID + ") "
-            + "ON DELETE CASCADE ON UPDATE CASCADE, "
-            + "PRIMARY KEY(" + TAGATIVIDADE_TAG_FK + ", " + TAGATIVIDADE_ATIVIDADE_FK + "));";
-    public static final String SQL_TAGATIVIDADE_DELETAR_TABELA = "DROP TABLE IF EXISTS "
-            + TAGATIVIDADE_NOME_TABELA + ";";
 
     //----------------------MÉTODOS E CONSTRUTORES ------------------
     public DatabaseHelper(Context context) {
@@ -138,7 +141,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         dbHelper.execSQL(SQL_TI_CRIAR_TABELA);
         dbHelper.execSQL(SQL_TAG_CRIAR_TABELA);
         dbHelper.execSQL(SQL_USUARIO_CRIAR_TABELA);
-        dbHelper.execSQL(SQL_TAGATIVIDADE_CRIAR_TABELA);
     }
 
     /*
@@ -154,7 +156,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         dbHelper.execSQL(SQL_TI_DELETAR_TABELA);
         dbHelper.execSQL(SQL_TAG_DELETAR_TABELA);
         dbHelper.execSQL(SQL_USUARIO_DELETAR_TABELA);
-        dbHelper.execSQL(SQL_TAGATIVIDADE_DELETAR_TABELA);
         onCreate(dbHelper);
     }
 

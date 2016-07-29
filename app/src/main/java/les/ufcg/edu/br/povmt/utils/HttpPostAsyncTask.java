@@ -2,6 +2,7 @@ package les.ufcg.edu.br.povmt.utils;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -27,7 +28,7 @@ public class HttpPostAsyncTask extends AsyncTask<String, Void, String> {
     // onPostExecute displays the results of the AsyncTask.
     @Override
     protected void onPostExecute(String result) {
-//            Toast.makeText(getBaseContext(), "Data Sent!", Toast.LENGTH_LONG).show();
+            Log.d("POST", result);
     }
 
     private String post(String url, String data){
