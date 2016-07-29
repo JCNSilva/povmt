@@ -29,4 +29,5 @@
     <string name="tempo_investido">Tempo Investido</string>
     <string name="horas_investidas">Horas investidas nessa semana</string>
     <string name="propor_o">Proporção</string>
+    <string name="textConfig">textConfig</string>
 </resources>
