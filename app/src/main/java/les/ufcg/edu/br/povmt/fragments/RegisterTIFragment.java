@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.activities.SplashActivity;
@@ -140,8 +139,8 @@ public class RegisterTIFragment extends DialogFragment {
             public void onClick(View v) {
                 try{
                     prepareData();
-                    dismiss();
                     homeFragment.atualizaLista();
+                    dismiss();
                 }catch(InputException e){
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -285,6 +284,7 @@ public class RegisterTIFragment extends DialogFragment {
             return 0;
         }
     }
+
     private String getDate(int day) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Calendar  cal = Calendar.getInstance();

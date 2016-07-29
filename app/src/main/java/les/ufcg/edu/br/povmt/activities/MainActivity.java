@@ -1,5 +1,7 @@
 package les.ufcg.edu.br.povmt.activities;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -7,6 +9,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -27,6 +30,8 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.squareup.picasso.Picasso;
 
+import java.util.Calendar;
+
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.fragments.AboutFragment;
 import les.ufcg.edu.br.povmt.fragments.ConfigurationsFragment;
@@ -34,7 +39,6 @@ import les.ufcg.edu.br.povmt.fragments.HistoryFragment;
 import les.ufcg.edu.br.povmt.fragments.HomeFragment;
 import les.ufcg.edu.br.povmt.fragments.RegisterTIFragment;
 import les.ufcg.edu.br.povmt.utils.CircleTransform;
-import les.ufcg.edu.br.povmt.utils.IonResume;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
@@ -43,6 +47,7 @@ public class MainActivity extends AppCompatActivity
     private static final String HISTORY_TAG = "HISTORY_TAG";
     private static final String ABOUT_TAG = "ABOUT_TAG";
     private static final String CONFIG_TAG = "CONFIG_TAG";
+    public static final String ACTION = "com.example.android.receivers.NOTIFICATION_ALARM";
 
     private SharedPreferences sharedPreferences;
     private TextView nameUsr;
@@ -76,6 +81,9 @@ public class MainActivity extends AppCompatActivity
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+        if (ConfigurationsFragment.notificacaoAtiva) {
+            notificar(01, 22);
+        }
 
         setUpFragments();
 
@@ -282,5 +290,39 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+
+
+    public void notificar(int hora, int minuto) {
+        Calendar calNow = Calendar.getInstance();
+        Calendar calSet = (Calendar) calNow.clone();
+        calSet.setTimeInMillis(System.currentTimeMillis());
+        calSet.add(Calendar.HOUR_OF_DAY, hora);
+        calSet.add(Calendar.MINUTE, minuto);
+        calSet.add(Calendar.SECOND, 0);
+        calSet.add(Calendar.MILLISECOND, 0);
+
+        setAlarme(calSet);
+    }
+
+    private void setAlarme(Calendar calendar) {
+        Intent intent = new Intent(ACTION);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        long time = calendar.getTimeInMillis();
+        alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+    }
+
+    private void cancelAlarm(){
+        Intent intent = new Intent(ACTION);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+
+        alarmManager.cancel(pendingIntent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }
