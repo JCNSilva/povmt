@@ -82,7 +82,6 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
         if (ConfigurationsFragment.notificacaoAtiva) {
-            Log.d("Script", "ENTROU!!");
             notificar(01, 22);
         }
 
@@ -294,19 +293,32 @@ public class MainActivity extends AppCompatActivity
         Calendar calNow = Calendar.getInstance();
         Calendar calSet = (Calendar) calNow.clone();
         calSet.setTimeInMillis(System.currentTimeMillis());
-        calSet.set(Calendar.HOUR_OF_DAY, hora);
-        calSet.set(Calendar.MINUTE, minuto);
-        calSet.set(Calendar.SECOND, 0);
-        calSet.set(Calendar.MILLISECOND, 0);
+        calSet.add(Calendar.HOUR_OF_DAY, hora);
+        calSet.add(Calendar.MINUTE, minuto);
+        calSet.add(Calendar.SECOND, 0);
+        calSet.add(Calendar.MILLISECOND, 0);
 
         setAlarme(calSet);
     }
 
     private void setAlarme(Calendar calendar) {
         Intent intent = new Intent(ACTION);
-        PendingIntent pendingintent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
         long time = calendar.getTimeInMillis();
-        alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingintent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+    }
+
+    private void cancelAlarm(){
+        Intent intent = new Intent(ACTION);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+
+        alarmManager.cancel(pendingIntent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }
