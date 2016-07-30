@@ -314,7 +314,6 @@ public class MainActivity extends AppCompatActivity
         Calendar calNow = Calendar.getInstance();
         long time = calendar.getTimeInMillis();
 
-        Log.d("Script", String.valueOf(time));
         Intent intent = new Intent(ACTION);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
