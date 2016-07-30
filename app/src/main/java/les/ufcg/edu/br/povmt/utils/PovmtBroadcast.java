@@ -1,5 +1,7 @@
 package les.ufcg.edu.br.povmt.utils;
 
+import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -21,6 +23,7 @@ public class PovmtBroadcast extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(MainActivity.ACTION)) {
+
             Log.d("Alarm Receiver", "onReceive called");
             NotificationCompat.Builder notificationBuilder =
                     (NotificationCompat.Builder) new NotificationCompat.Builder(context)
@@ -41,6 +44,12 @@ public class PovmtBroadcast extends BroadcastReceiver {
             notificationBuilder.setContentIntent(resultPendingIntent);
             NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(1, notificationBuilder.build());
+
+            intent = new Intent(MainActivity.ACTION);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Activity.ALARM_SERVICE);
+
+            alarmManager.cancel(pendingIntent);
         }
     }
 }

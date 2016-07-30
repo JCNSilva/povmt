@@ -2,6 +2,7 @@ package les.ufcg.edu.br.povmt.activities;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -81,8 +82,10 @@ public class MainActivity extends AppCompatActivity
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        if (ConfigurationsFragment.notificacaoAtiva) {
-            notificar(01, 22);
+
+        configFragment = new ConfigurationsFragment();
+        if (configFragment.isNotificacaoAtiva()) {
+            notificar(configFragment.getHoraNotificacao(), configFragment.getMinutoNotificacao());
         }
 
         setUpFragments();
@@ -129,7 +132,6 @@ public class MainActivity extends AppCompatActivity
         homeFragment = new HomeFragment();
         historyFragment = new HistoryFragment();
         aboutFragment = new AboutFragment();
-        configFragment = new ConfigurationsFragment();
 
         currentFragment = homeFragment;
 
@@ -297,23 +299,27 @@ public class MainActivity extends AppCompatActivity
         Calendar calNow = Calendar.getInstance();
         Calendar calSet = (Calendar) calNow.clone();
         calSet.setTimeInMillis(System.currentTimeMillis());
-        calSet.add(Calendar.HOUR_OF_DAY, hora);
-        calSet.add(Calendar.MINUTE, minuto);
-        calSet.add(Calendar.SECOND, 0);
-        calSet.add(Calendar.MILLISECOND, 0);
+        calSet.set(Calendar.HOUR_OF_DAY, hora);
+        calSet.set(Calendar.MINUTE, minuto);
+        calSet.set(Calendar.SECOND, 0);
+        calSet.set(Calendar.MILLISECOND, 0);
 
         setAlarme(calSet);
     }
 
     private void setAlarme(Calendar calendar) {
-        Intent intent = new Intent(ACTION);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        Calendar calNow = Calendar.getInstance();
         long time = calendar.getTimeInMillis();
-        alarmManager.set(AlarmManager.RTC_WAKEUP, time, pendingIntent);
+        if (time < calNow.getTimeInMillis()) {
+            time = calendar.getTimeInMillis() + (AlarmManager.INTERVAL_DAY+1);
+        }
+        Intent intent = new Intent(ACTION);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, 1000*60*60*24, pendingIntent);
     }
 
-    private void cancelAlarm(){
+    public void cancelAlarm(){
         Intent intent = new Intent(ACTION);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);

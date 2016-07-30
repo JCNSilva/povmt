@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Notificações"
-        android:id="@+id/config1"
+        android:id="@+id/txt_notificar"
         android:textSize="20dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -22,11 +22,11 @@
     <Switch
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/switch1"
+        android:id="@+id/switchNotificar"
         android:checked="true"
-        android:layout_alignTop="@+id/config1"
-        android:layout_toRightOf="@+id/config1"
-        android:layout_toEndOf="@+id/config1"
+        android:layout_alignTop="@+id/txt_notificar"
+        android:layout_toRightOf="@+id/txt_notificar"
+        android:layout_toEndOf="@+id/txt_notificar"
         android:layout_marginLeft="42dp"
         android:layout_marginStart="42dp" />
 
@@ -39,7 +39,7 @@
         android:textSize="15dp"
         android:layout_gravity="center_vertical"
         android:layout_marginTop="15dp"
-        android:layout_below="@+id/switch1"
+        android:layout_below="@+id/switchNotificar"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_centerInParent="true"
@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Intervalo de Notificação"
-        android:id="@+id/textView4"
+        android:id="@+id/txtHora"
         android:textSize="20dp"
         android:layout_gravity="center_vertical"
         android:layout_marginTop="55dp"
@@ -62,9 +62,9 @@
     <TimePicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/timePicker"
+        android:id="@+id/timePickerHora"
         android:timePickerMode="spinner"
-        android:layout_below="@+id/textView4"
+        android:layout_below="@+id/txtHora"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

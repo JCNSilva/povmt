@@ -73,9 +73,20 @@ public class HomeFragment extends Fragment implements IonResume {
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         listaAtividades.setLayoutManager(llm);
 
-//        atividadePersister = AtividadePersister.getInstance(getContext());
-        dataSource = DataSource.getInstance(getContext());
+        new GetaAtividade().execute();
+        return view;
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        atualizaLista();
+    }
+
+    @Override
+    public void atualizaLista() {
+        //            atividadePersister = AtividadePersister.getInstance(getContext());
+        dataSource = DataSource.getInstance(getContext());
         atividades = (ArrayList) dataSource.getAtividades(idUser);
         adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
         listaAtividades.setAdapter(adapter);
@@ -87,28 +98,9 @@ public class HomeFragment extends Fragment implements IonResume {
             listaVazia.setVisibility(View.GONE);
             campoAtividades.setVisibility(View.VISIBLE);
         }
-        new GetaAtividade().execute();
-        return view;
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-//            atividadePersister = AtividadePersister.getInstance(getContext());
-        dataSource = DataSource.getInstance(getContext());
-            atividades = (ArrayList) dataSource.getAtividades(idUser);
-            adapter = new AtividadeAdapter(new ArrayList<Atividade>(atividades));
-            listaAtividades.setAdapter(adapter);
-
-            //TODO Calcular TI na Semana
-            horasInvestidas.setText(String.valueOf(getHorasInvestidas()) + " " + getString(R.string.horas_investidas));
-
-    }
-
-    @Override
-    public void atualizaLista() {
-        onResume();
+        //TODO Calcular TI na Semana
+        horasInvestidas.setText(String.valueOf(getHorasInvestidas()) + " " + getString(R.string.horas_investidas));
     }
 
     private int getHorasInvestidas() {
