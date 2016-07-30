@@ -82,8 +82,10 @@ public class MainActivity extends AppCompatActivity
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        if (ConfigurationsFragment.notificacaoAtiva) {
-            notificar(15, 52);
+
+        configFragment = new ConfigurationsFragment();
+        if (configFragment.isNotificacaoAtiva()) {
+            notificar(configFragment.getHoraNotificacao(), configFragment.getMinutoNotificacao());
         }
 
         setUpFragments();
@@ -130,7 +132,6 @@ public class MainActivity extends AppCompatActivity
         homeFragment = new HomeFragment();
         historyFragment = new HistoryFragment();
         aboutFragment = new AboutFragment();
-        configFragment = new ConfigurationsFragment();
 
         currentFragment = homeFragment;
 
