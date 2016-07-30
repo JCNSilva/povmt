@@ -40,9 +40,10 @@ import les.ufcg.edu.br.povmt.fragments.HistoryFragment;
 import les.ufcg.edu.br.povmt.fragments.HomeFragment;
 import les.ufcg.edu.br.povmt.fragments.RegisterTIFragment;
 import les.ufcg.edu.br.povmt.utils.CircleTransform;
+import les.ufcg.edu.br.povmt.utils.IonResume;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, IonResume {
 
     public static final String HOME_TAG = "HOME_TAG";
     private static final String HISTORY_TAG = "HISTORY_TAG";
@@ -83,11 +84,7 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
 
-        configFragment = new ConfigurationsFragment();
-        if (configFragment.isNotificacaoAtiva()) {
-            notificar(configFragment.getHoraNotificacao(), configFragment.getMinutoNotificacao());
-        }
-
+        configFragment = new ConfigurationsFragment(this);
         setUpFragments();
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -166,6 +163,12 @@ public class MainActivity extends AppCompatActivity
             fab.setVisibility(View.VISIBLE);
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+   }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -310,9 +313,8 @@ public class MainActivity extends AppCompatActivity
     private void setAlarme(Calendar calendar) {
         Calendar calNow = Calendar.getInstance();
         long time = calendar.getTimeInMillis();
-        if (time < calNow.getTimeInMillis()) {
-            time = calendar.getTimeInMillis() + (AlarmManager.INTERVAL_DAY+1);
-        }
+
+        Log.d("Script", String.valueOf(time));
         Intent intent = new Intent(ACTION);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -320,6 +322,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void cancelAlarm(){
+        Log.d("Script", "Alarme cancelado.");
         Intent intent = new Intent(ACTION);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
@@ -330,5 +333,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    public void refresh() {
+        if (configFragment.isNotificacaoAtiva()) {
+            Log.d("Script", "Notificação está ativada.");
+            notificar(configFragment.getHoraNotificacao(), configFragment.getMinutoNotificacao());
+        }
     }
 }

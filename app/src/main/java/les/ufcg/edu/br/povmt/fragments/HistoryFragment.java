@@ -159,7 +159,7 @@ public class HistoryFragment extends Fragment implements IonResume {
     }
 
     @Override
-    public void atualizaLista() {
+    public void refresh() {
         onResume();
     }
 }

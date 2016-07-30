@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,9 +16,24 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TimePicker;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.LocalDateTime;
+import org.joda.time.Period;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 import les.ufcg.edu.br.povmt.R;
+import les.ufcg.edu.br.povmt.activities.MainActivity;
+import les.ufcg.edu.br.povmt.activities.SplashActivity;
+import les.ufcg.edu.br.povmt.database.DataSource;
+import les.ufcg.edu.br.povmt.models.Atividade;
+import les.ufcg.edu.br.povmt.models.TI;
 
 /**
  * Created by Veruska on 27/07/2016.
@@ -26,16 +42,16 @@ public class ConfigurationsFragment extends Fragment{
 
     private boolean notificacaoAtiva = true;
     private Switch notificacao;
-    private int horaNotificacao = 21;
-    private int minutoNotificacao = 47;
+    private int horaNotificacao = 12;
+    private int minutoNotificacao = 30;
     private TimePicker horario;
     private Button ok;
     private Button cancel;
+    private MainActivity mainActivity;
 
-    public ConfigurationsFragment() {
-        // Required empty public constructor
+       public ConfigurationsFragment(MainActivity mainActivity) {
+           this.mainActivity = mainActivity;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,8 +71,12 @@ public class ConfigurationsFragment extends Fragment{
                         public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
                             setHoraNotificacao(hourOfDay);
                             setMinutoNotificacao(minute);
+                            mainActivity.refresh();
                         }
                     });
+                    mainActivity.refresh();
+                } else if (!isChecked) {
+                    mainActivity.cancelAlarm();
                 }
             }
 
