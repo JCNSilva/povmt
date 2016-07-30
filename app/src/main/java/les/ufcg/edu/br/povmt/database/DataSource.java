@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import les.ufcg.edu.br.povmt.models.TI;
 import les.ufcg.edu.br.povmt.models.Usuario;
 
 /**
- * Created by treinamento-asus on 28/07/2016.
+ * Created by Julio on 28/07/2016.
  */
 public class DataSource {
 
@@ -90,9 +91,11 @@ public class DataSource {
 
         List<Atividade> atividades = new ArrayList<>();
         cursor.moveToFirst();
-        while (cursor.moveToNext()) {
-            Atividade model = createAtividade(cursor);
-            atividades.add(model);
+        if(cursor.getCount() > 0){
+            do {
+                Atividade model = createAtividade(cursor);
+                atividades.add(model);
+            } while(cursor.moveToNext());
         }
         cursor.close();
         return atividades;
@@ -123,6 +126,7 @@ public class DataSource {
                 Prioridade.valueOf(cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_PRIORIDADE))),
                 cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_FOTO)));
 
+        model.setId(idAtividade);
         model.setTiList(getTIs(idAtividade));
         return model;
     }
@@ -167,9 +171,11 @@ public class DataSource {
 
         List<TI> tisList = new ArrayList<>();
         cursor.moveToFirst();
-        while (cursor.moveToNext()) {
-            TI model = createTI(cursor);
-            tisList.add(model);
+        if(cursor.getCount() > 0){
+            do {
+                TI model = createTI(cursor);
+                tisList.add(model);
+            } while(cursor.moveToNext());
         }
 
         cursor.close();
@@ -186,9 +192,11 @@ public class DataSource {
 
         List<TI> tisList = new ArrayList<>();
         cursor.moveToFirst();
-        while (cursor.moveToNext()) {
-            TI model = createTI(cursor);
-            tisList.add(model);
+        if(cursor.getCount() > 0){
+            do {
+                TI model = createTI(cursor);
+                tisList.add(model);
+            } while (cursor.moveToNext());
         }
 
         cursor.close();
@@ -204,7 +212,7 @@ public class DataSource {
     }
 
 
-    public long inserirUsuario(Usuario usuario) {
+    public String inserirUsuario(Usuario usuario) {
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(dbHelper.USUARIO_ID, usuario.getId());
@@ -212,12 +220,12 @@ public class DataSource {
         contentValues.put(dbHelper.USUARIO_EMAIL, usuario.getEmail());
         contentValues.put(dbHelper.USUARIO_URL, usuario.getUrl());
 
-        long id = getDatabase().insert(dbHelper.USUARIO_NOME_TABELA, null, contentValues);
+        getDatabase().insert(dbHelper.USUARIO_NOME_TABELA, null, contentValues);
 
         for(Atividade atividade: usuario.getAtividadeList()){
             inserirAtividade(atividade, usuario.getId());
         }
-        return id;
+        return usuario.getId();
     }
 
     public int setDataSincronizacaoUsuario(String idUsuario, String timestamp){

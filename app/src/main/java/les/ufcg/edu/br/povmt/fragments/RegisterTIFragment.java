@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.activities.SplashActivity;
@@ -75,7 +76,6 @@ public class RegisterTIFragment extends DialogFragment {
     private String atividadeEscolhida;
 
     private ArrayList<Atividade> atividades;
-//    private AtividadePersister atividadePersister;
     private LinearLayout layoutNewActivity;
     private Atividade mAtividade;
     private SharedPreferences sharedPreferences;
@@ -242,34 +242,13 @@ public class RegisterTIFragment extends DialogFragment {
 
     //Salva no BD
     private void saveData(int operation, Atividade atv, TI ti) {
-        Log.d("TESTEBD1", String.valueOf(dataSource.getAtividades(idUser)));
-       if(operation == ATUALIZAR){
+
+        if(operation == ATUALIZAR){
            dataSource.inserirTI(ti, atv.getId());
-           dataSource.atualizarAtividade(atv, idUser);
-       }else if (operation == INSERIR){
+       } else if (operation == INSERIR){
            long atvId = dataSource.inserirAtividade(atv, idUser);
            dataSource.inserirTI(ti, atvId);
-//           dataSource.atualizarAtividade(atv, idUser);
-//           dataSource.getTI(tiId);
-           saveData(ATUALIZAR, dataSource.getAtividade(atvId),ti);
-//           Log.d("TESTEBD3", String.valueOf(dataSource.getTI(tiId)));
-//           Log.d("TESTEBD4", String.valueOf(dataSource.getTIs(atvId)));
-
-
-           // Se der loop comenta esse if
-           if (dataSource.getAtividades(idUser).isEmpty()) {
-               saveData(operation, atv, ti);
-
-               Log.d("TESTEBD2", String.valueOf(dataSource.getAtividades(idUser)));
-           }
-
        }
-
-
-
-//        Log.d("TESTEBD2", String.valueOf(dataSource.getTI(ti.getId()).getId()));
-//        Log.d("TESTEBD3", String.valueOf(tiPersister.getTIs(atv.getId())));
-//        Log.d("TESTEBD4", String.valueOf(atividadePersister.getAtividade(atv.getId())));
     }
 
     private int getWeek(String day) {
