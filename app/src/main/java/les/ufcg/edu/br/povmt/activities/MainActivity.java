@@ -83,8 +83,6 @@ public class MainActivity extends AppCompatActivity
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-
-        configFragment = new ConfigurationsFragment(this);
         setUpFragments();
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -128,6 +126,7 @@ public class MainActivity extends AppCompatActivity
     private void setUpFragments(){
         homeFragment = new HomeFragment();
         historyFragment = new HistoryFragment();
+        configFragment = new ConfigurationsFragment(this);
         aboutFragment = new AboutFragment();
 
         currentFragment = homeFragment;
@@ -240,7 +239,7 @@ public class MainActivity extends AppCompatActivity
                     fragmentTransaction.hide(currentFragment);
                     fragmentTransaction.add(R.id.fragment_container, configFragment, CONFIG_TAG);
                     fragmentTransaction.show(configFragment).commit();
-                } else if (!fragmentManager.findFragmentByTag(HISTORY_TAG).isVisible()) {
+                } else if (!fragmentManager.findFragmentByTag(CONFIG_TAG).isVisible()) {
                     fragmentTransaction.hide(currentFragment).show(configFragment).commit();
                 }
                 currentFragment = configFragment;
@@ -268,6 +267,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
         }
+        
         hideIcons();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/switchNotificar"
-        android:checked="true"
+        android:checked="false"
         android:layout_alignTop="@+id/txt_notificar"
         android:layout_toRightOf="@+id/txt_notificar"
         android:layout_toEndOf="@+id/txt_notificar"

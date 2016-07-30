@@ -64,8 +64,6 @@ public class HistoryFragment extends Fragment implements IonResume {
 
         initViews(view);
 
-        Log.d("Script", idUser);
-
         dataSource = DataSource.getInstance(getContext());
         atividadePersister = dataSource;
         atividades = (ArrayList) atividadePersister.getAtividades(idUser);
