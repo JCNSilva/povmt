@@ -220,6 +220,30 @@ public class DataSource {
         return id;
     }
 
+    public int setDataSincronizacaoUsuario(String idUsuario, String timestamp){
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(dbHelper.USUARIO_HORA_MODIFICACAO, timestamp);
+
+        return getDatabase().update(dbHelper.USUARIO_NOME_TABELA, contentValues,
+                dbHelper.USUARIO_ID + " = '" + idUsuario + "'", null);
+    }
+
+    public String getDataSincronizacaoUsuario(String idUsuario){
+        String[] columns = new String []{dbHelper.USUARIO_HORA_MODIFICACAO};
+
+        Cursor cursor = getDatabase().query(dbHelper.USUARIO_NOME_TABELA,
+                columns, dbHelper.USUARIO_ID + " = '" + idUsuario + "'", null, null, null, null);
+
+        cursor.moveToFirst();
+        if (cursor.getCount() == 1) {
+            String dataModificacao = cursor.getString(cursor.getColumnIndex(dbHelper.USUARIO_HORA_MODIFICACAO));
+            cursor.close();
+            return dataModificacao;
+        }
+        return null;
+    }
+
     public int atualizarUsuario(Usuario usuario) {
         ContentValues contentValues = new ContentValues();
 

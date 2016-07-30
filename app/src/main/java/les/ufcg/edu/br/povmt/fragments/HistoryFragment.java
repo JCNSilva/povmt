@@ -56,6 +56,8 @@ public class HistoryFragment extends Fragment implements IonResume {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
 
+        atividadePersister = DataSource.getInstance(getContext());
+
         sharedPreferences = getContext().getSharedPreferences(SplashActivity.PREFERENCE_NAME, Context.MODE_PRIVATE);
         idUser = sharedPreferences.getString(SplashActivity.USER_ID, "");
 

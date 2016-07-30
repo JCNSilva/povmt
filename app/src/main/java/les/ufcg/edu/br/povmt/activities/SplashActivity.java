@@ -20,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.auth.api.Auth;
@@ -57,11 +58,12 @@ public class SplashActivity extends AppCompatActivity implements
 
     private static final int RC_SIGN_IN = 9001;
     private static final String TAG = "SplashActivity";
-    private static final String URL_CRIAR_USUARIO = "http://lucasmatos.pythonanywhere.com/povmt/";
 
     private List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(2);
     private Usuario user;
     private GoogleApiClient mGoogleApiClient;
+    private RequestQueue queue;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +85,7 @@ public class SplashActivity extends AppCompatActivity implements
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
+        queue = Volley.newRequestQueue(this);
 
         // Customize sign-in button. The sign-in button can be displayed in
         // multiple sizes and color schemes. It can also be contextually
@@ -155,66 +158,92 @@ public class SplashActivity extends AppCompatActivity implements
 
         if(atualizacoes == 0) { //O usuário não existia previamente
             dataSource.inserirUsuario(usuario);
-
-            try {
-            /*String json = "";
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.accumulate("id", user.getId());
-            jsonObject.accumulate("nome", user.getNome());
-            jsonObject.accumulate("email", user.getEmail());
-            jsonObject.accumulate("url_foto", user.getUrl());
-            json = jsonObject.toString();
-
-            new HttpPostAsyncTask().execute(URL_CRIAR_USUARIO, json);*/
-
-            RequestQueue queue = Volley.newRequestQueue(this);
-            StringRequest cadastroRequest = new StringRequest(Request.Method.POST, URL_CRIAR_USUARIO,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            Log.d("Volley", response);
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            NetworkResponse response = error.networkResponse;
-                            if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-                                Log.e("Volley", "Erro!");
-                            } else if (error instanceof AuthFailureError) {
-                                Log.e("Volley", "Erro!");
-                            } else if (error instanceof ServerError) {
-                                Log.e("Volley", "Erro!");
-                            } else if (error instanceof NetworkError) {
-                                Log.e("Volley", "Erro!");
-                            } else if (error instanceof ParseError) {
-                                Log.e("Volley", "Erro!");
-                            }
-                        }
-                    }) {
-
-                @Override
-                protected Map<String, String> getParams()
-                {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("id", user.getId());
-                    params.put("nome", user.getNome());
-                    params.put("email", user.getEmail());
-                    params.put("url_foto", user.getUrl());
-
-                    return params;
-                }
-            };
-
-                queue.add(cadastroRequest);
-
-
-            } catch(Exception e) {
-                Log.d("JsonObject", e.getLocalizedMessage());
-            }
+            refletirCadastro();
 
         } else { //O usuário já existia
+            //Pega todas as informaçoes do usuario
+        }
+    }
 
+    private void refletirCadastro() {
+        final String URL_INFO_USUARIO = "http://lucasmatos.pythonanywhere.com/povmt/user/" + user.getId();
+        final String URL_CRIAR_USUARIO = "http://lucasmatos.pythonanywhere.com/povmt/";
+
+        Response.Listener<JSONObject> usuarioRequestResponseListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try{
+                    if(response.has("data_created") && !response.isNull("data_created")){
+                        String dataPersistido = response.getString("data_created");
+                        DataSource.getInstance(getApplicationContext())
+                                .setDataSincronizacaoUsuario(user.getId(), dataPersistido);
+
+                        Log.d(TAG, "" + DataSource.getInstance(getApplicationContext())
+                                .getDataSincronizacaoUsuario(user.getId()));
+                    } else {
+                        Log.w(TAG, "A resposta veio sem data");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "Erro ao converter dados");
+                }
+            }
+        };
+
+        Response.ErrorListener usuarioRequestErrorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                handleVolleyError(error);
+            }
+        };
+
+        final JsonObjectRequest getUsuarioRequest = new JsonObjectRequest(Request.Method.GET, URL_INFO_USUARIO, null,
+                usuarioRequestResponseListener, usuarioRequestErrorListener);
+
+        Response.Listener<String> cadastroRequestResponseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, response);
+                //Callback (?)
+                queue.add(getUsuarioRequest);
+            }
+        };
+
+
+        final StringRequest cadastroRequest = new StringRequest(Request.Method.POST, URL_CRIAR_USUARIO,
+            cadastroRequestResponseListener, usuarioRequestErrorListener) {
+
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("id", user.getId());
+                params.put("nome", user.getNome());
+                params.put("email", user.getEmail());
+                params.put("url_foto", user.getUrl());
+
+                return params;
+            }
+        };
+
+        queue.add(cadastroRequest);
+    }
+
+    private void handleVolleyError(VolleyError error) {
+        NetworkResponse response = error.networkResponse;
+        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+            Log.e(TAG, "Sem resposta!");
+        } else if (error instanceof AuthFailureError) {
+            Log.e(TAG, "Erro de autenticacao!");
+        } else if (error instanceof ServerError) {
+            Log.e(TAG, "Erro de servidor!");
+        } else if (error instanceof NetworkError) {
+            Log.e(TAG, "Erro de rede!");
+        } else if (error instanceof ParseError) {
+            Log.e(TAG, "Erro ao converter resposta!");
+        } else {
+            Log.e(TAG, "Erro desconhecido!");
         }
     }
 
