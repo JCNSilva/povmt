@@ -66,12 +66,6 @@ public class PovmtBroadcast extends BroadcastReceiver {
                 notificationBuilder.setContentIntent(resultPendingIntent);
                 NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 mNotificationManager.notify(1, notificationBuilder.build());
-
-                intent = new Intent(MainActivity.ACTION);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-                AlarmManager alarmManager = (AlarmManager) context.getSystemService(Activity.ALARM_SERVICE);
-
-                alarmManager.cancel(pendingIntent);
             }
         }
     }
