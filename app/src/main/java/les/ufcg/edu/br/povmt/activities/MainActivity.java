@@ -31,6 +31,8 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.squareup.picasso.Picasso;
 
+import org.joda.time.DateTime;
+
 import java.util.Calendar;
 
 import les.ufcg.edu.br.povmt.R;
@@ -40,16 +42,16 @@ import les.ufcg.edu.br.povmt.fragments.HistoryFragment;
 import les.ufcg.edu.br.povmt.fragments.HomeFragment;
 import les.ufcg.edu.br.povmt.fragments.RegisterTIFragment;
 import les.ufcg.edu.br.povmt.utils.CircleTransform;
+import les.ufcg.edu.br.povmt.utils.IonResume;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, IonResume {
 
     public static final String HOME_TAG = "HOME_TAG";
     private static final String HISTORY_TAG = "HISTORY_TAG";
     private static final String ABOUT_TAG = "ABOUT_TAG";
     private static final String CONFIG_TAG = "CONFIG_TAG";
     public static final String ACTION = "com.example.android.receivers.NOTIFICATION_ALARM";
-
     private SharedPreferences sharedPreferences;
     private TextView nameUsr;
     private ImageView imgUsr;
@@ -81,12 +83,6 @@ public class MainActivity extends AppCompatActivity
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
-
-
-        configFragment = new ConfigurationsFragment();
-        if (configFragment.isNotificacaoAtiva()) {
-            notificar(configFragment.getHoraNotificacao(), configFragment.getMinutoNotificacao());
-        }
 
         setUpFragments();
 
@@ -131,6 +127,7 @@ public class MainActivity extends AppCompatActivity
     private void setUpFragments(){
         homeFragment = new HomeFragment();
         historyFragment = new HistoryFragment();
+        configFragment = new ConfigurationsFragment(this);
         aboutFragment = new AboutFragment();
 
         currentFragment = homeFragment;
@@ -166,6 +163,12 @@ public class MainActivity extends AppCompatActivity
             fab.setVisibility(View.VISIBLE);
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+   }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -237,7 +240,7 @@ public class MainActivity extends AppCompatActivity
                     fragmentTransaction.hide(currentFragment);
                     fragmentTransaction.add(R.id.fragment_container, configFragment, CONFIG_TAG);
                     fragmentTransaction.show(configFragment).commit();
-                } else if (!fragmentManager.findFragmentByTag(HISTORY_TAG).isVisible()) {
+                } else if (!fragmentManager.findFragmentByTag(CONFIG_TAG).isVisible()) {
                     fragmentTransaction.hide(currentFragment).show(configFragment).commit();
                 }
                 currentFragment = configFragment;
@@ -265,6 +268,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
         }
+
         hideIcons();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -294,6 +298,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
 
     public void notificar(int hora, int minuto) {
         Calendar calNow = Calendar.getInstance();
@@ -310,25 +319,31 @@ public class MainActivity extends AppCompatActivity
     private void setAlarme(Calendar calendar) {
         Calendar calNow = Calendar.getInstance();
         long time = calendar.getTimeInMillis();
-        if (time < calNow.getTimeInMillis()) {
-            time = calendar.getTimeInMillis() + (AlarmManager.INTERVAL_DAY+1);
+        if (time <= calNow.getTimeInMillis()) {
+            time = time + (AlarmManager.INTERVAL_DAY+1);
         }
+
         Intent intent = new Intent(ACTION);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, 1000*60*60*24, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
     public void cancelAlarm(){
+        Log.d("Script", "Alarme cancelado.");
         Intent intent = new Intent(ACTION);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         alarmManager.cancel(pendingIntent);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void refresh() {
+        if (configFragment.isNotificacaoAtiva()) {
+            Log.d("Script", "Notificação está ativada.");
+
+            notificar(configFragment.getHoraNotificacao(), configFragment.getMinutoNotificacao());
+        }
     }
 }

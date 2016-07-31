@@ -162,7 +162,7 @@ public class RegisterTIFragment extends DialogFragment {
             public void onClick(View v) {
                 try{
                     prepareData();
-                    homeFragment.atualizaLista();
+                    homeFragment.refresh();
                     dismiss();
                 }catch(InputException e){
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();

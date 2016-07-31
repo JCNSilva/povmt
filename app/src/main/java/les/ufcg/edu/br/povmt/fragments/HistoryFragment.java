@@ -64,8 +64,6 @@ public class HistoryFragment extends Fragment implements IonResume {
 
         initViews(view);
 
-        Log.d("Script", idUser);
-
         dataSource = DataSource.getInstance(getContext());
         atividadePersister = dataSource;
         atividades = (ArrayList) atividadePersister.getAtividades(idUser);
@@ -159,7 +157,7 @@ public class HistoryFragment extends Fragment implements IonResume {
     }
 
     @Override
-    public void atualizaLista() {
+    public void refresh() {
         onResume();
     }
 }

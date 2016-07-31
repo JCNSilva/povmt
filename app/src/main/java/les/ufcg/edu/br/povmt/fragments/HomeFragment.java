@@ -80,11 +80,11 @@ public class HomeFragment extends Fragment implements IonResume {
     @Override
     public void onResume() {
         super.onResume();
-        atualizaLista();
+        refresh();
     }
 
     @Override
-    public void atualizaLista() {
+    public void refresh() {
         //            atividadePersister = AtividadePersister.getInstance(getContext());
         dataSource = DataSource.getInstance(getContext());
         atividades = (ArrayList) dataSource.getAtividades(idUser);
