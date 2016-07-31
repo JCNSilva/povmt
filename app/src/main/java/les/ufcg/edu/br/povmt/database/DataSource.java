@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +28,13 @@ public class DataSource {
     private SQLiteDatabase database;
     private final DatabaseHelper dbHelper;
     private static DataSource dataSource;
+    private final RequestQueue requestQueue;
     /** Constructor of the DataSource
      *   @param context
      */
     private DataSource(Context context) {
         dbHelper = new DatabaseHelper(context);
+        requestQueue = Volley.newRequestQueue(context);
     }
     /** Method to open the database
      */
@@ -41,6 +47,10 @@ public class DataSource {
             dataSource = new DataSource(context);
         }
         return dataSource;
+    }
+
+    public RequestQueue getRequestQueue(){
+        return requestQueue;
     }
 
     private SQLiteDatabase getDatabase() {
@@ -131,6 +141,30 @@ public class DataSource {
         return model;
     }
 
+    public int setDataSincronizacaoAtividade(long id, String timestamp) {
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(dbHelper.ATIVIDADE_HORA_MODIFICACAO, timestamp);
+
+        return getDatabase().update(dbHelper.ATIVIDADE_NOME_TABELA, contentValues,
+                dbHelper.ATIVIDADE_ID + " = '" + id + "'", null);
+    }
+
+    public String getDataSincronizacaoAtividade(long id) {
+        String[] columns = new String []{dbHelper.ATIVIDADE_HORA_MODIFICACAO};
+
+        Cursor cursor = getDatabase().query(dbHelper.ATIVIDADE_NOME_TABELA,
+                columns, dbHelper.ATIVIDADE_ID + " = '" + id + "'", null, null, null, null);
+
+        cursor.moveToFirst();
+        if (cursor.getCount() == 1) {
+            String dataModificacao = cursor.getString(cursor.getColumnIndex(dbHelper.ATIVIDADE_HORA_MODIFICACAO));
+            cursor.close();
+            return dataModificacao;
+        }
+        return null;
+    }
+
 
     public long inserirTI(TI ti, long idAtividade) {
         ContentValues contentValues = new ContentValues();
@@ -211,6 +245,31 @@ public class DataSource {
         return model;
     }
 
+    public int setDataSincronizacaoTI(long id, String timestamp) {
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(dbHelper.TI_HORA_MODIFICACAO, timestamp);
+
+        return getDatabase().update(dbHelper.TI_NOME_TABELA, contentValues,
+                dbHelper.TI_ID + " = '" + id + "'", null);
+    }
+
+
+    public String getDataSincronizacaoTI(long id) {
+        String[] columns = new String []{dbHelper.TI_HORA_MODIFICACAO};
+
+        Cursor cursor = getDatabase().query(dbHelper.TI_NOME_TABELA,
+                columns, dbHelper.TI_ID + " = '" + id + "'", null, null, null, null);
+
+        cursor.moveToFirst();
+        if (cursor.getCount() == 1) {
+            String dataModificacao = cursor.getString(cursor.getColumnIndex(dbHelper.TI_HORA_MODIFICACAO));
+            cursor.close();
+            return dataModificacao;
+        }
+        return null;
+    }
+
 
     public String inserirUsuario(Usuario usuario) {
         ContentValues contentValues = new ContentValues();
@@ -251,6 +310,7 @@ public class DataSource {
         }
         return null;
     }
+
 
     public int atualizarUsuario(Usuario usuario) {
         ContentValues contentValues = new ContentValues();
@@ -301,4 +361,5 @@ public class DataSource {
                 cursor.getString(cursor.getColumnIndex(dbHelper.USUARIO_URL)));
         return model;
     }
+
 }

@@ -85,7 +85,7 @@ public class SplashActivity extends AppCompatActivity implements
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        queue = Volley.newRequestQueue(this);
+        queue = Volley.newRequestQueue(this.getApplicationContext());
 
         // Customize sign-in button. The sign-in button can be displayed in
         // multiple sizes and color schemes. It can also be contextually
@@ -169,7 +169,7 @@ public class SplashActivity extends AppCompatActivity implements
         final String URL_INFO_USUARIO = "http://lucasmatos.pythonanywhere.com/povmt/user/" + user.getId();
         final String URL_CRIAR_USUARIO = "http://lucasmatos.pythonanywhere.com/povmt/";
 
-        Response.Listener<JSONObject> usuarioRequestResponseListener = new Response.Listener<JSONObject>() {
+        final Response.Listener<JSONObject> usuarioRequestResponseListener = new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try{
@@ -191,7 +191,7 @@ public class SplashActivity extends AppCompatActivity implements
             }
         };
 
-        Response.ErrorListener usuarioRequestErrorListener = new Response.ErrorListener() {
+        final Response.ErrorListener usuarioRequestErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 handleVolleyError(error);
@@ -201,7 +201,7 @@ public class SplashActivity extends AppCompatActivity implements
         final JsonObjectRequest getUsuarioRequest = new JsonObjectRequest(Request.Method.GET, URL_INFO_USUARIO, null,
                 usuarioRequestResponseListener, usuarioRequestErrorListener);
 
-        Response.Listener<String> cadastroRequestResponseListener = new Response.Listener<String>() {
+        final Response.Listener<String> cadastroRequestResponseListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, response);

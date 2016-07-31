@@ -19,6 +19,21 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import org.json.JSONObject;
+
 import org.honorato.multistatetogglebutton.MultiStateToggleButton;
 
 import java.text.ParseException;
@@ -26,7 +41,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.activities.SplashActivity;
@@ -44,6 +61,8 @@ import les.ufcg.edu.br.povmt.utils.IonResume;
  * A simple {@link Fragment} subclass.
  */
 public class RegisterTIFragment extends DialogFragment {
+    private static final String TAG = "RegisterTIFragment";
+
     private static final int INVALIDO = -1;
 
     private static final int TRABALHO = 0;
@@ -58,6 +77,8 @@ public class RegisterTIFragment extends DialogFragment {
     private static final int BAIXA = 0;
     private static final int MEDIA = 1;
     private static final int ALTA = 2;
+
+    private RequestQueue requestQueue;
 
     public static final String PREFERENCE_NAME = "USER_PREFERENCE";
     private MultiStateToggleButton dia;
@@ -94,6 +115,8 @@ public class RegisterTIFragment extends DialogFragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_register_ti, container, false);
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        requestQueue = DataSource.getInstance(getContext()).getRequestQueue();
 
         sharedPreferences = getContext().getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE);
         idUser = sharedPreferences.getString(SplashActivity.USER_ID, "");
@@ -241,14 +264,178 @@ public class RegisterTIFragment extends DialogFragment {
     }
 
     //Salva no BD
-    private void saveData(int operation, Atividade atv, TI ti) {
+    private void saveData(int operation, final Atividade atv, final TI ti) {
 
         if(operation == ATUALIZAR){
-           dataSource.inserirTI(ti, atv.getId());
-       } else if (operation == INSERIR){
-           long atvId = dataSource.inserirAtividade(atv, idUser);
-           dataSource.inserirTI(ti, atvId);
-       }
+            inserirERefletirTI(atv, ti);
+
+        } else if (operation == INSERIR){
+            inserirERefletirAtividade(atv);
+            inserirERefletirTI(atv, ti);
+        }
+    }
+
+    private void inserirERefletirAtividade(final Atividade atv) {
+        dataSource.inserirAtividade(atv, idUser);
+
+        final String URL_CRIA_ATIVIDADE = "http://lucasmatos.pythonanywhere.com/povmt/" + idUser + "/";
+        final String URL_GET_ATIVIDADE = "http://lucasmatos.pythonanywhere.com/povmt/atividade/" + atv.getId();
+
+        final Response.Listener<JSONObject> getAtividadeResponseListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try{
+                    if(response.has("data_created") && !response.isNull("data_created")){
+                        String dataPersistido = response.getString("data_created");
+                        DataSource.getInstance(getContext())
+                                .setDataSincronizacaoAtividade(atv.getId(), dataPersistido);
+
+                        Log.d(TAG, "" + DataSource.getInstance(getContext())
+                                .getDataSincronizacaoAtividade(atv.getId()));
+                    } else {
+                        Log.w(TAG, "A resposta veio sem data");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "Erro ao converter dados");
+                }
+            }
+        };
+
+        final Response.ErrorListener genericErrorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                handleVolleyError(error);
+            }
+        };
+
+        final JsonObjectRequest getAtividadeRequest = new JsonObjectRequest(Request.Method.GET, URL_GET_ATIVIDADE, null,
+                getAtividadeResponseListener, genericErrorListener);
+
+        final Response.Listener<String> criaAtividadeResponseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Log.e(TAG, response);
+                requestQueue.add(getAtividadeRequest);
+            }
+        };
+
+        final StringRequest criaAtividadeRequest = new StringRequest(Request.Method.POST, URL_CRIA_ATIVIDADE,
+                criaAtividadeResponseListener, genericErrorListener) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+
+                params.put("id", nullSafe(String.valueOf(atv.getId())));
+                params.put("nome", nullSafe(atv.getNome()));
+                params.put("categoria", nullSafe(atv.getCategoria().toString()));
+                params.put("prioridade", nullSafe(atv.getPrioridade().toString()));
+                params.put("id_usuario", nullSafe(idUser));
+
+
+                for(String key: params.keySet()){
+                    Log.e(TAG+" Ativ", key+":"+params.get(key));
+                }
+
+                return params;
+            }
+        };
+
+        requestQueue.add(criaAtividadeRequest);
+    }
+
+
+
+    private void inserirERefletirTI(final Atividade atv, final TI ti) {
+        dataSource.inserirTI(ti, atv.getId());
+
+        final String URL_CRIA_TI = "http://lucasmatos.pythonanywhere.com/povmt/tilist/" + atv.getId() + "/";
+        final String URL_GET_TI = "http://lucasmatos.pythonanywhere.com/povmt/tiedit/" + ti.getId()+ "/" + atv.getId();
+
+        final Response.Listener<JSONObject> getTIResponseListener = new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try{
+                    if(response.has("data_created") && !response.isNull("data_created")){
+                        String dataPersistido = response.getString("data_created");
+                        DataSource.getInstance(getContext())
+                                .setDataSincronizacaoTI(ti.getId(), dataPersistido);
+
+                        Log.d(TAG, "" + DataSource.getInstance(getContext())
+                                .getDataSincronizacaoTI(ti.getId()));
+                    } else {
+                        Log.w(TAG, "A resposta veio sem data");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "Erro ao converter dados");
+                }
+            }
+        };
+
+        final Response.ErrorListener genericErrorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                handleVolleyError(error);
+            }
+        };
+
+        final JsonObjectRequest getTIRequest = new JsonObjectRequest(Request.Method.GET, URL_GET_TI, null,
+                getTIResponseListener, genericErrorListener);
+
+        final Response.Listener<String> criaTIResponseListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                requestQueue.add(getTIRequest);
+            }
+        };
+
+        final StringRequest inserirTIRequest = new StringRequest(Request.Method.POST, URL_CRIA_TI,
+                criaTIResponseListener, genericErrorListener) {
+            @Override
+            protected Map<String, String> getParams()
+            {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("id", nullSafe(String.valueOf(ti.getId())));
+                params.put("data", nullSafe(ti.getData()));
+                params.put("semana", nullSafe(String.valueOf(ti.getSemana())));
+                params.put("horas", nullSafe(String.valueOf(ti.getHoras())));
+                params.put("id_atividade", nullSafe(String.valueOf(atv.getId())));
+
+                for(String key: params.keySet()){
+                    Log.e(TAG+" TI", key+":"+params.get(key));
+                }
+
+                return params;
+            }
+        };
+
+        requestQueue.add(inserirTIRequest);
+    }
+
+    private String nullSafe(String string) {
+        if(string == null) return "";
+        else return string;
+    }
+
+    private void handleVolleyError(VolleyError error) {
+        NetworkResponse response = error.networkResponse;
+        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+            Log.e(TAG, "Sem resposta!");
+        } else if (error instanceof AuthFailureError) {
+            Log.e(TAG, "Erro de autenticacao!");
+        } else if (error instanceof ServerError) {
+            Log.e(TAG, "Erro de servidor!");
+        } else if (error instanceof NetworkError) {
+            Log.e(TAG, "Erro de rede!");
+        } else if (error instanceof ParseError) {
+            Log.e(TAG, "Erro ao converter resposta!");
+        } else {
+            Log.e(TAG, "Erro desconhecido!");
+        }
     }
 
     private int getWeek(String day) {
