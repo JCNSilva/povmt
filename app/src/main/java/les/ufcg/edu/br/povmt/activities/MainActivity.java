@@ -31,6 +31,8 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.squareup.picasso.Picasso;
 
+import org.joda.time.DateTime;
+
 import java.util.Calendar;
 
 import les.ufcg.edu.br.povmt.R;
@@ -50,7 +52,6 @@ public class MainActivity extends AppCompatActivity
     private static final String ABOUT_TAG = "ABOUT_TAG";
     private static final String CONFIG_TAG = "CONFIG_TAG";
     public static final String ACTION = "com.example.android.receivers.NOTIFICATION_ALARM";
-
     private SharedPreferences sharedPreferences;
     private TextView nameUsr;
     private ImageView imgUsr;
@@ -267,7 +268,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
         }
-        
+
         hideIcons();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -297,6 +298,11 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
 
     public void notificar(int hora, int minuto) {
         Calendar calNow = Calendar.getInstance();
@@ -313,31 +319,30 @@ public class MainActivity extends AppCompatActivity
     private void setAlarme(Calendar calendar) {
         Calendar calNow = Calendar.getInstance();
         long time = calendar.getTimeInMillis();
+        if (time <= calNow.getTimeInMillis()) {
+            time = time + (AlarmManager.INTERVAL_DAY+1);
+        }
 
         Intent intent = new Intent(ACTION);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, 1000*60*60*24, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
     }
 
     public void cancelAlarm(){
         Log.d("Script", "Alarme cancelado.");
         Intent intent = new Intent(ACTION);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         alarmManager.cancel(pendingIntent);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     @Override
     public void refresh() {
         if (configFragment.isNotificacaoAtiva()) {
             Log.d("Script", "Notificação está ativada.");
+
             notificar(configFragment.getHoraNotificacao(), configFragment.getMinutoNotificacao());
         }
     }

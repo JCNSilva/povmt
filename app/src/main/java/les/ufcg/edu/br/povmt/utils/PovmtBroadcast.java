@@ -25,6 +25,7 @@ import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.activities.MainActivity;
 import les.ufcg.edu.br.povmt.activities.SplashActivity;
 import les.ufcg.edu.br.povmt.database.DataSource;
+import les.ufcg.edu.br.povmt.fragments.ConfigurationsFragment;
 import les.ufcg.edu.br.povmt.models.Atividade;
 import les.ufcg.edu.br.povmt.models.TI;
 
@@ -42,10 +43,10 @@ public class PovmtBroadcast extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         isNotTISCadastrada = false;
         verificarCadastroDeTI(context);
-
+        Log.d("Alarm Receiver", "onReceive called");
         if (intent.getAction().equals(MainActivity.ACTION)) {
             if (isNotTISCadastrada()) {
-                Log.d("Alarm Receiver", "onReceive called");
+                Log.d("Alarm Receiver", "Sem TI");
                 NotificationCompat.Builder notificationBuilder =
                         (NotificationCompat.Builder) new NotificationCompat.Builder(context)
                                 .setSmallIcon(R.drawable.logo)
@@ -84,13 +85,19 @@ public class PovmtBroadcast extends BroadcastReceiver {
         LocalDateTime hoje = new LocalDateTime().now();
         DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy");
 
-        for (Atividade atividade : listAtividades) {
-            List<TI> tis = atividade.getTiList();
-            String data = tis.get(tis.size()-1).getData();
-            int diferenca = Days.daysBetween(hoje, LocalDateTime.parse(data, format)).getDays();
-            if (diferenca >= 1) {
-                setNotTISCadastrada(true);
-                return;
+        if (listAtividades.isEmpty()) {
+            setNotTISCadastrada(true);
+            return;
+        } else {
+            for (Atividade atividade : listAtividades) {
+                List<TI> tis = atividade.getTiList();
+                String data = tis.get(tis.size() - 1).getData();
+                int diferenca = Days.daysBetween(hoje, LocalDateTime.parse(data, format)).getDays();
+                if (diferenca >= 1 || tis.isEmpty()) {
+                    Log.d("Verificado:", "Você não cadastrou ontem ou não tem atividade!");
+                    setNotTISCadastrada(true);
+                    return;
+                }
             }
         }
     }
