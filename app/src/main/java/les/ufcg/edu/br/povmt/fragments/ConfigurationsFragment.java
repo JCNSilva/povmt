@@ -114,8 +114,8 @@ public class ConfigurationsFragment extends Fragment{
         boolean isChecked = sharedPreferences.getBoolean(NOTIFICATION, false);
         int hour = sharedPreferences.getInt(HOUR, 0);
         int minute = sharedPreferences.getInt(MINUTE, 0);
-        horario.setHour(hour);
-        horario.setMinute(minute);
+        horario.setCurrentHour(hour);
+        horario.setCurrentMinute(minute);
         notificacao.setChecked(isChecked);
         setNotificacaoAtiva(isChecked);
         if (notificacao.isChecked()) {

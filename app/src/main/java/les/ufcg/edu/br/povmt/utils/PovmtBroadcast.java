@@ -87,7 +87,7 @@ public class PovmtBroadcast extends BroadcastReceiver {
                 List<TI> tis = atividade.getTiList();
                 String data = tis.get(tis.size() - 1).getData();
                 int diferenca = Days.daysBetween(hoje, LocalDateTime.parse(data, format)).getDays();
-                if (diferenca >= 1 || tis.isEmpty()) {
+                if (diferenca < -1) {
                     Log.d("Verificado:", "Você não cadastrou ontem ou não tem atividade!");
                     setNotTISCadastrada(true);
                     return;
