@@ -42,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import les.ufcg.edu.br.povmt.R;
@@ -270,13 +269,13 @@ public class RegisterTIFragment extends DialogFragment {
             inserirERefletirTI(atv, ti);
 
         } else if (operation == INSERIR){
-            inserirERefletirAtividade(atv);
-            inserirERefletirTI(atv, ti);
+            inserirERefletirAtividadeTI(atv, ti);
         }
     }
 
-    private void inserirERefletirAtividade(final Atividade atv) {
+    private void inserirERefletirAtividadeTI(final Atividade atv, final TI ti) {
         dataSource.inserirAtividade(atv, idUser);
+        dataSource.inserirTI(ti, atv.getId());
 
         final String URL_CRIA_ATIVIDADE = "http://lucasmatos.pythonanywhere.com/povmt/" + idUser + "/";
         final String URL_GET_ATIVIDADE = "http://lucasmatos.pythonanywhere.com/povmt/atividade/" + atv.getId();
@@ -292,6 +291,8 @@ public class RegisterTIFragment extends DialogFragment {
 
                         Log.d(TAG, "" + DataSource.getInstance(getContext())
                                 .getDataSincronizacaoAtividade(atv.getId()));
+
+                        refletirTI(atv, ti);
                     } else {
                         Log.w(TAG, "A resposta veio sem data");
                     }
@@ -347,10 +348,7 @@ public class RegisterTIFragment extends DialogFragment {
     }
 
 
-
-    private void inserirERefletirTI(final Atividade atv, final TI ti) {
-        dataSource.inserirTI(ti, atv.getId());
-
+    private void refletirTI(final Atividade atv, final TI ti) {
         final String URL_CRIA_TI = "http://lucasmatos.pythonanywhere.com/povmt/tilist/" + atv.getId() + "/";
         final String URL_GET_TI = "http://lucasmatos.pythonanywhere.com/povmt/tiedit/" + ti.getId()+ "/" + atv.getId();
 
@@ -414,6 +412,12 @@ public class RegisterTIFragment extends DialogFragment {
         };
 
         requestQueue.add(inserirTIRequest);
+    }
+
+
+    private void inserirERefletirTI(final Atividade atv, final TI ti) {
+        dataSource.inserirTI(ti, atv.getId());
+        refletirTI(atv, ti);
     }
 
     private String nullSafe(String string) {
