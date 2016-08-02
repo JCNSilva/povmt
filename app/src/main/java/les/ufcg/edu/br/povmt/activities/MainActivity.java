@@ -23,6 +23,19 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.NoConnectionError;
+import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.ServerError;
+import com.android.volley.TimeoutError;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
@@ -32,10 +45,12 @@ import com.google.android.gms.common.api.Status;
 import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
+import org.json.JSONArray;
 
 import java.util.Calendar;
 
 import les.ufcg.edu.br.povmt.R;
+import les.ufcg.edu.br.povmt.database.DataSource;
 import les.ufcg.edu.br.povmt.fragments.AboutFragment;
 import les.ufcg.edu.br.povmt.fragments.ConfigurationsFragment;
 import les.ufcg.edu.br.povmt.fragments.HistoryFragment;
@@ -47,6 +62,7 @@ import les.ufcg.edu.br.povmt.utils.IonResume;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, IonResume {
 
+    public static final String TAG = "MAIN";
     public static final String HOME_TAG = "HOME_TAG";
     private static final String HISTORY_TAG = "HISTORY_TAG";
     private static final String ABOUT_TAG = "ABOUT_TAG";
@@ -65,6 +81,8 @@ public class MainActivity extends AppCompatActivity
     private AboutFragment aboutFragment;
     private ConfigurationsFragment configFragment;
     private FloatingActionButton fab;
+
+    private RequestQueue requestQueue = DataSource.getInstance(getApplicationContext()).getRequestQueue();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -344,6 +362,71 @@ public class MainActivity extends AppCompatActivity
             Log.d("Script", "Notificação está ativada.");
 
             notificar(configFragment.getHoraNotificacao(), configFragment.getMinutoNotificacao());
+        }
+    }
+
+    private void getTIsUsuario(){
+        //TODO fazer isso para cada atividade
+        final String URL_GET_TIS = "http://lucasmatos.pythonanywhere.com/povmt/tilist/" + "idatividade";
+
+        final Response.ErrorListener genericErrorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                handleVolleyError(error);
+            }
+        };
+
+        final Response.Listener<JSONArray> getTisResponseListener = new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                //TODO
+            }
+        };
+
+        final JsonArrayRequest getTisRequest = new JsonArrayRequest(URL_GET_TIS,
+                getTisResponseListener, genericErrorListener);
+
+        requestQueue.add(getTisRequest);
+    }
+
+    private void getAtividadesUsuario(){
+        //TODO pegar id do usuario
+        final String URL_GET_ATIVIDADES = "http://lucasmatos.pythonanywhere.com/povmt/" + "id_usuario";
+
+        final Response.ErrorListener genericErrorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                handleVolleyError(error);
+            }
+        };
+
+        final Response.Listener<JSONArray> getAtividadesResponseListener = new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                //TODO
+            }
+        };
+
+        final JsonArrayRequest getAtividadesRequest = new JsonArrayRequest(URL_GET_ATIVIDADES,
+                getAtividadesResponseListener, genericErrorListener);
+
+        requestQueue.add(getAtividadesRequest);
+    }
+
+    private void handleVolleyError(VolleyError error) {
+        NetworkResponse response = error.networkResponse;
+        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
+            Log.e(TAG, "Sem resposta!");
+        } else if (error instanceof AuthFailureError) {
+            Log.e(TAG, "Erro de autenticacao!");
+        } else if (error instanceof ServerError) {
+            Log.e(TAG, "Erro de servidor!");
+        } else if (error instanceof NetworkError) {
+            Log.e(TAG, "Erro de rede!");
+        } else if (error instanceof ParseError) {
+            Log.e(TAG, "Erro ao converter resposta!");
+        } else {
+            Log.e(TAG, "Erro desconhecido!");
         }
     }
 }
