@@ -31,7 +31,7 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
+
 import org.json.JSONObject;
 
 import org.honorato.multistatetogglebutton.MultiStateToggleButton;
@@ -41,8 +41,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.activities.SplashActivity;
@@ -266,7 +264,7 @@ public class RegisterTIFragment extends DialogFragment {
     private void saveData(int operation, final Atividade atv, final TI ti) {
 
         if(operation == ATUALIZAR){
-            inserirERefletirTI(atv, ti);
+            inserirTI(atv, ti);
 
         } else if (operation == INSERIR){
             inserirAtividadeTI(atv, ti);
@@ -274,13 +272,10 @@ public class RegisterTIFragment extends DialogFragment {
     }
 
     private void inserirAtividadeTI(final Atividade atv, final TI ti) {
-        dataSource.inserirAtividade(atv, idUser);
-        dataSource.inserirTI(ti, atv.getId());
-
         final String URL_CRIA_ATIVIDADE = "http://lucasmatos.pythonanywhere.com/povmt/" + idUser + "/";
-        final String URL_GET_ATIVIDADE = "http://lucasmatos.pythonanywhere.com/povmt/atividade/" + atv.getId();
+        //final String URL_GET_ATIVIDADE = "http://lucasmatos.pythonanywhere.com/povmt/atividade/" + atv.getId();
 
-        final Response.Listener<JSONObject> getAtividadeResponseListener = new Response.Listener<JSONObject>() {
+        /*final Response.Listener<JSONObject> getAtividadeResponseListener = new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try{
@@ -292,7 +287,7 @@ public class RegisterTIFragment extends DialogFragment {
                         Log.d(TAG, "" + DataSource.getInstance(getContext())
                                 .getDataSincronizacaoAtividade(atv.getId()));
 
-                        refletirTI(atv, ti);
+                        inserirTI(atv, ti);
                     } else {
                         Log.w(TAG, "A resposta veio sem data");
                     }
@@ -302,7 +297,7 @@ public class RegisterTIFragment extends DialogFragment {
                     Log.e(TAG, "Erro ao converter dados");
                 }
             }
-        };
+        };*/
 
         final Response.ErrorListener genericErrorListener = new Response.ErrorListener() {
             @Override
@@ -311,48 +306,59 @@ public class RegisterTIFragment extends DialogFragment {
             }
         };
 
-        final JsonObjectRequest getAtividadeRequest = new JsonObjectRequest(Request.Method.GET, URL_GET_ATIVIDADE, null,
-                getAtividadeResponseListener, genericErrorListener);
+        /*final JsonObjectRequest getAtividadeRequest = new JsonObjectRequest(Request.Method.GET, URL_GET_ATIVIDADE, null,
+                getAtividadeResponseListener, genericErrorListener);*/
 
-        final Response.Listener<String> criaAtividadeResponseListener = new Response.Listener<String>() {
+        final Response.Listener<JSONObject> criaAtividadeResponseListener = new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(String response) {
-                Log.e(TAG, response);
-                requestQueue.add(getAtividadeRequest);
-            }
-        };
+            public void onResponse(JSONObject response) {
+                try{
+                    if(response.has("ati_id") && !response.isNull("ati_id")){
+                        atv.setId(response.getLong("ati_id"));
+                        dataSource.inserirAtividade(atv, idUser);
+                        /*String dataPersistido = response.getString("data_created");
+                        DataSource.getInstance(getContext())
+                                .setDataSincronizacaoAtividade(atv.getId(), dataPersistido);
 
-        final StringRequest criaAtividadeRequest = new StringRequest(Request.Method.POST, URL_CRIA_ATIVIDADE,
-                criaAtividadeResponseListener, genericErrorListener) {
+                        Log.d(TAG, "" + DataSource.getInstance(getContext())
+                                .getDataSincronizacaoAtividade(atv.getId()));*/
 
-            @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
+                        inserirTI(atv, ti);
+                    } else {
+                        Log.w(TAG, "A resposta veio sem data");
+                    }
 
-                params.put("id", nullSafe(String.valueOf(atv.getId())));
-                params.put("nome", nullSafe(atv.getNome()));
-                params.put("categoria", nullSafe(atv.getCategoria().toString()));
-                params.put("prioridade", nullSafe(atv.getPrioridade().toString()));
-                params.put("id_usuario", nullSafe(idUser));
-
-
-                for(String key: params.keySet()){
-                    Log.e(TAG+" Ativ", key+":"+params.get(key));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "Erro ao converter dados");
                 }
 
-                return params;
+                //requestQueue.add(getAtividadeRequest);
             }
         };
+
+        JSONObject params = new JSONObject();
+        try {
+            params.put("nome", nullSafe(atv.getNome()));
+            params.put("prioridade", nullSafe(String.valueOf(atv.getPrioridade())));
+            params.put("categoria", nullSafe(String.valueOf(atv.getCategoria())));
+            params.put("id_usuario", nullSafe(idUser));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        final JsonObjectRequest criaAtividadeRequest = new JsonObjectRequest(Request.Method.POST, URL_CRIA_ATIVIDADE, params,
+                criaAtividadeResponseListener, genericErrorListener);
 
         requestQueue.add(criaAtividadeRequest);
     }
 
 
-    private void refletirTI(final Atividade atv, final TI ti) {
+    private void inserirTI(final Atividade atv, final TI ti) {
         final String URL_CRIA_TI = "http://lucasmatos.pythonanywhere.com/povmt/tilist/" + atv.getId() + "/";
-        final String URL_GET_TI = "http://lucasmatos.pythonanywhere.com/povmt/tiedit/" + ti.getId()+ "/" + atv.getId();
+        //final String URL_GET_TI = "http://lucasmatos.pythonanywhere.com/povmt/tiedit/" + ti.getId()+ "/" + atv.getId();
 
-        final Response.Listener<JSONObject> getTIResponseListener = new Response.Listener<JSONObject>() {
+        /*final Response.Listener<JSONObject> getTIResponseListener = new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try{
@@ -372,7 +378,7 @@ public class RegisterTIFragment extends DialogFragment {
                     Log.e(TAG, "Erro ao converter dados");
                 }
             }
-        };
+        };*/
 
         final Response.ErrorListener genericErrorListener = new Response.ErrorListener() {
             @Override
@@ -381,18 +387,48 @@ public class RegisterTIFragment extends DialogFragment {
             }
         };
 
-        final JsonObjectRequest getTIRequest = new JsonObjectRequest(Request.Method.GET, URL_GET_TI, null,
-                getTIResponseListener, genericErrorListener);
+        /*final JsonObjectRequest getTIRequest = new JsonObjectRequest(Request.Method.GET, URL_GET_TI, null,
+                getTIResponseListener, genericErrorListener);*/
 
-        final Response.Listener<String> criaTIResponseListener = new Response.Listener<String>() {
+        final Response.Listener<JSONObject> criaTIResponseListener = new Response.Listener<JSONObject>() {
             @Override
-            public void onResponse(String response) {
-                requestQueue.add(getTIRequest);
+            public void onResponse(JSONObject response) {
+                try{
+                    if(response.has("ti_id") && !response.isNull("ti_id")){
+                        ti.setId(response.getLong("ti_id"));
+                        dataSource.inserirTI(ti, atv.getId());
+                        /*String dataPersistido = response.getString("data_created");
+                        DataSource.getInstance(getContext())
+                                .setDataSincronizacaoAtividade(atv.getId(), dataPersistido);
+
+                        Log.d(TAG, "" + DataSource.getInstance(getContext())
+                                .getDataSincronizacaoAtividade(atv.getId()));*/
+
+                        //inserirTI(atv, ti);
+                    } else {
+                        Log.w(TAG, "A resposta veio sem data");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e(TAG, "Erro ao converter dados");
+                }
+                //requestQueue.add(getTIRequest);
             }
         };
 
-        final StringRequest inserirTIRequest = new StringRequest(Request.Method.POST, URL_CRIA_TI,
-                criaTIResponseListener, genericErrorListener) {
+        final JSONObject params = new JSONObject();
+        try {
+            params.put("data", nullSafe(ti.getData()));
+            params.put("semana", nullSafe(String.valueOf(ti.getSemana())));
+            params.put("horas", nullSafe(String.valueOf(ti.getHoras())));
+            params.put("id_atividade", nullSafe(String.valueOf(atv.getId())));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        final JsonObjectRequest inserirTIRequest = new JsonObjectRequest(Request.Method.POST, URL_CRIA_TI, params,
+                criaTIResponseListener, genericErrorListener);/* {
             @Override
             protected Map<String, String> getParams()
             {
@@ -409,16 +445,16 @@ public class RegisterTIFragment extends DialogFragment {
 
                 return params;
             }
-        };
+        };*/
 
         requestQueue.add(inserirTIRequest);
     }
 
 
-    private void inserirERefletirTI(final Atividade atv, final TI ti) {
+    /*private void inserirERefletirTI(final Atividade atv, final TI ti) {
         dataSource.inserirTI(ti, atv.getId());
-        refletirTI(atv, ti);
-    }
+        inserirTI(atv, ti);
+    }*/
 
     private String nullSafe(String string) {
         if(string == null) return "";
