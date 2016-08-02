@@ -13,7 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     //------------------ INFORMAÇÕES GERAIS -----------------------
-    public static final int VERSAO_BD = 9;
+    public static final int VERSAO_BD = 10;
     public static final String NOME_DB = "POVMTDatabase";
 
 
@@ -51,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String SQL_ATIVIDADE_CRIAR_TABELA = "CREATE TABLE "
             + ATIVIDADE_NOME_TABELA + "("
-            + ATIVIDADE_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
+            + ATIVIDADE_ID + " INTEGER NOT NULL PRIMARY KEY, "
             + ATIVIDADE_NOME + " TEXT NOT NULL, "
             + ATIVIDADE_CATEGORIA + " TEXT, "
             + ATIVIDADE_PRIORIDADE + " TEXT NOT NULL, "
@@ -78,7 +78,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String SQL_TI_CRIAR_TABELA = "CREATE TABLE "
             + TI_NOME_TABELA + "("
-            + TI_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
+            + TI_ID + " INTEGER NOT NULL PRIMARY KEY, "
             + TI_DATA + " TEXT NOT NULL, "
             + TI_SEMANA + " INTEGER NOT NULL, "
             + TI_HORAS + " INTEGER NOT NULL, "
@@ -96,18 +96,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //-----------------------TABELA DE TAGS -----------------------
     public static final String TAG_NOME_TABELA = "tabTag";
     public static final String TAG_NOME = "nome";
+    public static final String TAG_ID = "_id";
     public static final String TAG_HORA_MODIFICADA = "horaModificada";
     public static final String TAG_ATIVIDADE_FK = "atividade";
 
     public static final String SQL_TAG_CRIAR_TABELA = "CREATE TABLE "
             + TAG_NOME_TABELA + "("
+            + TAG_ID + " INTEGER NOT NULL, "
             + TAG_NOME + " TEXT NOT NULL, "
             + TAG_HORA_MODIFICADA + " TEXT, "
             + TAG_ATIVIDADE_FK + " INTEGER NOT NULL, "
             + "FOREIGN KEY (" + TAG_ATIVIDADE_FK + ") REFERENCES "
             + ATIVIDADE_NOME_TABELA + " (" + ATIVIDADE_ID + ") "
             + "ON DELETE CASCADE ON UPDATE CASCADE, "
-            + "PRIMARY KEY(" + TAG_NOME + ", " + TAG_ATIVIDADE_FK + "));";
+            + "PRIMARY KEY(" + TAG_ID + ", " + TAG_ATIVIDADE_FK + "));";
 
     public static final String SQL_TAG_DELETAR_TABELA  = "DROP TABLE IF EXISTS "
             + TAG_NOME_TABELA + ";";

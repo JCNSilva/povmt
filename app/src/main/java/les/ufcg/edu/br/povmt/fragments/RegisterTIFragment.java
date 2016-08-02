@@ -269,11 +269,11 @@ public class RegisterTIFragment extends DialogFragment {
             inserirERefletirTI(atv, ti);
 
         } else if (operation == INSERIR){
-            inserirERefletirAtividadeTI(atv, ti);
+            inserirAtividadeTI(atv, ti);
         }
     }
 
-    private void inserirERefletirAtividadeTI(final Atividade atv, final TI ti) {
+    private void inserirAtividadeTI(final Atividade atv, final TI ti) {
         dataSource.inserirAtividade(atv, idUser);
         dataSource.inserirTI(ti, atv.getId());
 

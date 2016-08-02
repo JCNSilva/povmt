@@ -65,6 +65,7 @@ public class DataSource {
 
         ContentValues contentValues = new ContentValues();
 
+        contentValues.put(dbHelper.ATIVIDADE_ID, atividade.getId());
         contentValues.put(dbHelper.ATIVIDADE_NOME, atividade.getNome());
         contentValues.put(dbHelper.ATIVIDADE_CATEGORIA, atividade.getCategoria().toString());
         contentValues.put(dbHelper.ATIVIDADE_PRIORIDADE, atividade.getPrioridade().toString());
@@ -72,12 +73,13 @@ public class DataSource {
         contentValues.put(dbHelper.ATIVIDADE_USUARIO_FK, idUser);
 
         long id = getDatabase().insert(dbHelper.ATIVIDADE_NOME_TABELA, null, contentValues);
-        atividade.setId(id);
         return id;
     }
 
     public long atualizarAtividade(Atividade atividade, String idUser) {
         ContentValues contentValues = new ContentValues();
+
+        contentValues.put(dbHelper.ATIVIDADE_ID, atividade.getId());
         contentValues.put(dbHelper.ATIVIDADE_NOME, atividade.getNome());
         contentValues.put(dbHelper.ATIVIDADE_CATEGORIA, atividade.getCategoria().toString());
         contentValues.put(dbHelper.ATIVIDADE_PRIORIDADE, atividade.getPrioridade().toString());
@@ -169,13 +171,13 @@ public class DataSource {
     public long inserirTI(TI ti, long idAtividade) {
         ContentValues contentValues = new ContentValues();
 
+        contentValues.put(dbHelper.TI_ID, ti.getId());
         contentValues.put(dbHelper.TI_DATA, ti.getData());
         contentValues.put(dbHelper.TI_SEMANA, ti.getSemana());
         contentValues.put(dbHelper.TI_HORAS, ti.getHoras());
         contentValues.put(dbHelper.TI_ATIVIDADE_FK, idAtividade);
 
         long id = getDatabase().insert(dbHelper.TI_NOME_TABELA, null, contentValues);
-        ti.setId(id);
         return id;
     }
 
