@@ -48,6 +48,7 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import les.ufcg.edu.br.povmt.R;
@@ -60,6 +61,7 @@ import les.ufcg.edu.br.povmt.fragments.RegisterTIFragment;
 import les.ufcg.edu.br.povmt.models.Atividade;
 import les.ufcg.edu.br.povmt.models.Categoria;
 import les.ufcg.edu.br.povmt.models.Prioridade;
+import les.ufcg.edu.br.povmt.models.TI;
 import les.ufcg.edu.br.povmt.utils.CircleTransform;
 import les.ufcg.edu.br.povmt.utils.IonResume;
 
@@ -72,8 +74,6 @@ public class MainActivity extends AppCompatActivity
     private static final String ABOUT_TAG = "ABOUT_TAG";
     private static final String CONFIG_TAG = "CONFIG_TAG";
     public static final String ACTION = "com.example.android.receivers.NOTIFICATION_ALARM";
-    private static final int TRABALHO = 0;
-    private static final int LAZER = 1;
     private SharedPreferences sharedPreferences;
     private TextView nameUsr;
     private ImageView imgUsr;
@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity
     private ConfigurationsFragment configFragment;
     private FloatingActionButton fab;
     RequestQueue requestQueue;
+    private DataSource dataSource;
 
 
 
@@ -97,6 +98,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        dataSource = DataSource.getInstance(getApplicationContext());
         requestQueue = DataSource.getInstance(getApplicationContext()).getRequestQueue();
         sharedPreferences = getSharedPreferences(SplashActivity.PREFERENCE_NAME, MODE_PRIVATE);
 
@@ -373,11 +375,9 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private void getTIsUsuario(){
-
-        //TODO fazer isso para cada atividade
-        final String URL_GET_TIS = "http://lucasmatos.pythonanywhere.com/povmt/tilist/" + "idatividade";
-
+    private ArrayList<TI> getTIsUsuario(final long idatividade){
+        final String URL_GET_TIS = "http://lucasmatos.pythonanywhere.com/povmt/tilist/" + idatividade;
+        final ArrayList<TI> listti = new ArrayList<TI>();
         final Response.ErrorListener genericErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -388,7 +388,19 @@ public class MainActivity extends AppCompatActivity
         final Response.Listener<JSONArray> getTisResponseListener = new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                //TODO
+                for(int i =0; i < response.length(); i++){
+                    try {
+                        String data = response.getJSONObject(i).getString("data");
+                        int semana = response.getJSONObject(i).getInt("semana");
+                        int horas = response.getJSONObject(i).getInt("horas");
+                        long idti= response.getJSONObject(i).getLong("id");
+                        TI ti  = new TI(idti,data,semana, horas);
+                        listti.add(ti);
+                        dataSource.inserirTI(ti, idatividade);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         };
 
@@ -396,11 +408,10 @@ public class MainActivity extends AppCompatActivity
                 getTisResponseListener, genericErrorListener);
 
         requestQueue.add(getTisRequest);
+        return listti;
     }
 
     private void getAtividadesUsuario(){
-
-        //TODO pegar id do usuario
         final String URL_GET_ATIVIDADES = "http://lucasmatos.pythonanywhere.com/povmt/" + sharedPreferences.getString(SplashActivity.USER_ID, "");
 
         final Response.ErrorListener genericErrorListener = new Response.ErrorListener() {
@@ -413,21 +424,20 @@ public class MainActivity extends AppCompatActivity
         final Response.Listener<JSONArray> getAtividadesResponseListener = new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                //TODO
                 for(int i =0; i < response.length(); i++){
                     try {
                         String name = response.getJSONObject(i).getString("nome");
                         long idatividade= response.getJSONObject(i).getLong("id");
                         Categoria categoria_db = null;
                         String categoria = response.getJSONObject(i).getString("categoria");
-                        if(categoria.equals( "TRABALHO")) {
+                        if(categoria.equals("TRABALHO")) {
                             categoria_db = Categoria.TRABALHO;
-                        } else if (categoria.equals("Lazer")) {
+                        } else if (categoria.equals("LAZER")) {
                             categoria_db = Categoria.LAZER;
                         }
                         Prioridade prioridade_db = null;
                         String prioridade = response.getJSONObject(i).getString("prioridade");
-                        if(prioridade.equals( "BAIXA")) {
+                        if(prioridade.equals("BAIXA")) {
                             prioridade_db = Prioridade.BAIXA;
                         } else if (prioridade.equals( "MEDIA")) {
                             prioridade_db = Prioridade.MEDIA;
@@ -437,7 +447,15 @@ public class MainActivity extends AppCompatActivity
 
                         String foto = response.getJSONObject(i).getString("url_imagem");
                         Atividade atividade = new Atividade(idatividade, name, categoria_db, prioridade_db, foto);
+                        ArrayList<TI> listati = getTIsUsuario(idatividade);
+                        for (int j= 0; j < listati.size(); j++){
+                            atividade.addTI(listati.get(j));
+                        }
+                        //TODO atualizar lista de atividades
+                        dataSource.inserirAtividade(atividade, sharedPreferences.getString(SplashActivity.USER_ID, ""));
                         Log.d(TAG, atividade.toString());
+                        Log.d(TAG, categoria);
+                        Log.d(TAG, prioridade);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
