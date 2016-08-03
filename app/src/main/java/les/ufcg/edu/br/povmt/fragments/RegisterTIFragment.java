@@ -324,6 +324,7 @@ public class RegisterTIFragment extends DialogFragment {
                                 .getDataSincronizacaoAtividade(atv.getId()));*/
 
                         inserirTI(atv, ti);
+                        homeFragment.refresh();
                     } else {
                         Log.w(TAG, "A resposta veio sem data");
                     }

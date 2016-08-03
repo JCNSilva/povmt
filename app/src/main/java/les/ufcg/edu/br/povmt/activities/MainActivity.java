@@ -451,11 +451,9 @@ public class MainActivity extends AppCompatActivity
                         for (int j= 0; j < listati.size(); j++){
                             atividade.addTI(listati.get(j));
                         }
-                        //TODO atualizar lista de atividades
+
                         dataSource.inserirAtividade(atividade, sharedPreferences.getString(SplashActivity.USER_ID, ""));
-                        Log.d(TAG, atividade.toString());
-                        Log.d(TAG, categoria);
-                        Log.d(TAG, prioridade);
+                        homeFragment.onResume();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
