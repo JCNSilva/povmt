@@ -50,6 +50,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import les.ufcg.edu.br.povmt.R;
 import les.ufcg.edu.br.povmt.database.DataSource;
@@ -396,7 +397,10 @@ public class MainActivity extends AppCompatActivity
                         long idti= response.getJSONObject(i).getLong("id");
                         TI ti  = new TI(idti,data,semana, horas);
                         listti.add(ti);
-                        dataSource.inserirTI(ti, idatividade);
+                        if (dataSource.getTI(ti.getId()) == null) {
+                            dataSource.inserirTI(ti, idatividade);
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -434,6 +438,8 @@ public class MainActivity extends AppCompatActivity
                             categoria_db = Categoria.TRABALHO;
                         } else if (categoria.equals("LAZER")) {
                             categoria_db = Categoria.LAZER;
+                        }else{
+                            categoria_db = Categoria.VAZIO;
                         }
                         Prioridade prioridade_db = null;
                         String prioridade = response.getJSONObject(i).getString("prioridade");
@@ -451,8 +457,10 @@ public class MainActivity extends AppCompatActivity
                         for (int j= 0; j < listati.size(); j++){
                             atividade.addTI(listati.get(j));
                         }
+                        if (dataSource.getAtividade(atividade.getId()) == null) {
+                            dataSource.inserirAtividade(atividade, sharedPreferences.getString(SplashActivity.USER_ID, ""));
+                        }
 
-                        dataSource.inserirAtividade(atividade, sharedPreferences.getString(SplashActivity.USER_ID, ""));
                         homeFragment.onResume();
                     } catch (JSONException e) {
                         e.printStackTrace();
