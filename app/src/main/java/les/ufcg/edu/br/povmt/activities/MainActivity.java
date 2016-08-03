@@ -46,6 +46,7 @@ import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.Calendar;
 
@@ -56,6 +57,9 @@ import les.ufcg.edu.br.povmt.fragments.ConfigurationsFragment;
 import les.ufcg.edu.br.povmt.fragments.HistoryFragment;
 import les.ufcg.edu.br.povmt.fragments.HomeFragment;
 import les.ufcg.edu.br.povmt.fragments.RegisterTIFragment;
+import les.ufcg.edu.br.povmt.models.Atividade;
+import les.ufcg.edu.br.povmt.models.Categoria;
+import les.ufcg.edu.br.povmt.models.Prioridade;
 import les.ufcg.edu.br.povmt.utils.CircleTransform;
 import les.ufcg.edu.br.povmt.utils.IonResume;
 
@@ -68,6 +72,8 @@ public class MainActivity extends AppCompatActivity
     private static final String ABOUT_TAG = "ABOUT_TAG";
     private static final String CONFIG_TAG = "CONFIG_TAG";
     public static final String ACTION = "com.example.android.receivers.NOTIFICATION_ALARM";
+    private static final int TRABALHO = 0;
+    private static final int LAZER = 1;
     private SharedPreferences sharedPreferences;
     private TextView nameUsr;
     private ImageView imgUsr;
@@ -81,8 +87,9 @@ public class MainActivity extends AppCompatActivity
     private AboutFragment aboutFragment;
     private ConfigurationsFragment configFragment;
     private FloatingActionButton fab;
+    RequestQueue requestQueue;
 
-    private RequestQueue requestQueue = DataSource.getInstance(getApplicationContext()).getRequestQueue();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +97,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        requestQueue = DataSource.getInstance(getApplicationContext()).getRequestQueue();
         sharedPreferences = getSharedPreferences(SplashActivity.PREFERENCE_NAME, MODE_PRIVATE);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -134,6 +141,7 @@ public class MainActivity extends AppCompatActivity
         nameUsr = (TextView) headerLayout.findViewById(R.id.nameUsr);
         emailUsr = (TextView) headerLayout.findViewById(R.id.emailUsr);
         imgUsr = (ImageView) headerLayout.findViewById(R.id.imgUsr);
+        getAtividadesUsuario();
 
         setUpViewsDrawer();
 //        setUpFragments();
@@ -366,6 +374,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getTIsUsuario(){
+
         //TODO fazer isso para cada atividade
         final String URL_GET_TIS = "http://lucasmatos.pythonanywhere.com/povmt/tilist/" + "idatividade";
 
@@ -390,8 +399,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getAtividadesUsuario(){
+
         //TODO pegar id do usuario
-        final String URL_GET_ATIVIDADES = "http://lucasmatos.pythonanywhere.com/povmt/" + "id_usuario";
+        final String URL_GET_ATIVIDADES = "http://lucasmatos.pythonanywhere.com/povmt/" + sharedPreferences.getString(SplashActivity.USER_ID, "");
 
         final Response.ErrorListener genericErrorListener = new Response.ErrorListener() {
             @Override
@@ -404,12 +414,40 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(JSONArray response) {
                 //TODO
+                for(int i =0; i < response.length(); i++){
+                    try {
+                        String name = response.getJSONObject(i).getString("nome");
+                        long idatividade= response.getJSONObject(i).getLong("id");
+                        Categoria categoria_db = null;
+                        String categoria = response.getJSONObject(i).getString("categoria");
+                        if(categoria.equals( "TRABALHO")) {
+                            categoria_db = Categoria.TRABALHO;
+                        } else if (categoria.equals("Lazer")) {
+                            categoria_db = Categoria.LAZER;
+                        }
+                        Prioridade prioridade_db = null;
+                        String prioridade = response.getJSONObject(i).getString("prioridade");
+                        if(prioridade.equals( "BAIXA")) {
+                            prioridade_db = Prioridade.BAIXA;
+                        } else if (prioridade.equals( "MEDIA")) {
+                            prioridade_db = Prioridade.MEDIA;
+                        } else if (prioridade.equals( "ALTA")) {
+                            prioridade_db = Prioridade.ALTA;
+                        }
+
+                        String foto = response.getJSONObject(i).getString("url_imagem");
+                        Atividade atividade = new Atividade(idatividade, name, categoria_db, prioridade_db, foto);
+                        Log.d(TAG, atividade.toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
             }
         };
 
         final JsonArrayRequest getAtividadesRequest = new JsonArrayRequest(URL_GET_ATIVIDADES,
                 getAtividadesResponseListener, genericErrorListener);
-
         requestQueue.add(getAtividadesRequest);
     }
 
