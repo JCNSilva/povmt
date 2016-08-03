@@ -273,41 +273,12 @@ public class RegisterTIFragment extends DialogFragment {
 
     private void inserirAtividadeTI(final Atividade atv, final TI ti) {
         final String URL_CRIA_ATIVIDADE = "http://lucasmatos.pythonanywhere.com/povmt/" + idUser + "/";
-        //final String URL_GET_ATIVIDADE = "http://lucasmatos.pythonanywhere.com/povmt/atividade/" + atv.getId();
-
-        /*final Response.Listener<JSONObject> getAtividadeResponseListener = new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try{
-                    if(response.has("data_created") && !response.isNull("data_created")){
-                        String dataPersistido = response.getString("data_created");
-                        DataSource.getInstance(getContext())
-                                .setDataSincronizacaoAtividade(atv.getId(), dataPersistido);
-
-                        Log.d(TAG, "" + DataSource.getInstance(getContext())
-                                .getDataSincronizacaoAtividade(atv.getId()));
-
-                        inserirTI(atv, ti);
-                    } else {
-                        Log.w(TAG, "A resposta veio sem data");
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "Erro ao converter dados");
-                }
-            }
-        };*/
-
         final Response.ErrorListener genericErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 handleVolleyError(error);
             }
         };
-
-        /*final JsonObjectRequest getAtividadeRequest = new JsonObjectRequest(Request.Method.GET, URL_GET_ATIVIDADE, null,
-                getAtividadeResponseListener, genericErrorListener);*/
 
         final Response.Listener<JSONObject> criaAtividadeResponseListener = new Response.Listener<JSONObject>() {
             @Override
@@ -316,15 +287,7 @@ public class RegisterTIFragment extends DialogFragment {
                     if(response.has("ati_id") && !response.isNull("ati_id")){
                         atv.setId(response.getLong("ati_id"));
                         dataSource.inserirAtividade(atv, idUser);
-                        /*String dataPersistido = response.getString("data_created");
-                        DataSource.getInstance(getContext())
-                                .setDataSincronizacaoAtividade(atv.getId(), dataPersistido);
-
-                        Log.d(TAG, "" + DataSource.getInstance(getContext())
-                                .getDataSincronizacaoAtividade(atv.getId()));*/
-
                         inserirTI(atv, ti);
-                        homeFragment.refresh();
                     } else {
                         Log.w(TAG, "A resposta veio sem data");
                     }
@@ -333,8 +296,6 @@ public class RegisterTIFragment extends DialogFragment {
                     e.printStackTrace();
                     Log.e(TAG, "Erro ao converter dados");
                 }
-
-                //requestQueue.add(getAtividadeRequest);
             }
         };
 
@@ -357,39 +318,12 @@ public class RegisterTIFragment extends DialogFragment {
 
     private void inserirTI(final Atividade atv, final TI ti) {
         final String URL_CRIA_TI = "http://lucasmatos.pythonanywhere.com/povmt/tilist/" + atv.getId() + "/";
-        //final String URL_GET_TI = "http://lucasmatos.pythonanywhere.com/povmt/tiedit/" + ti.getId()+ "/" + atv.getId();
-
-        /*final Response.Listener<JSONObject> getTIResponseListener = new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try{
-                    if(response.has("data_created") && !response.isNull("data_created")){
-                        String dataPersistido = response.getString("data_created");
-                        DataSource.getInstance(getContext())
-                                .setDataSincronizacaoTI(ti.getId(), dataPersistido);
-
-                        Log.d(TAG, "" + DataSource.getInstance(getContext())
-                                .getDataSincronizacaoTI(ti.getId()));
-                    } else {
-                        Log.w(TAG, "A resposta veio sem data");
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Log.e(TAG, "Erro ao converter dados");
-                }
-            }
-        };*/
-
         final Response.ErrorListener genericErrorListener = new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 handleVolleyError(error);
             }
         };
-
-        /*final JsonObjectRequest getTIRequest = new JsonObjectRequest(Request.Method.GET, URL_GET_TI, null,
-                getTIResponseListener, genericErrorListener);*/
 
         final Response.Listener<JSONObject> criaTIResponseListener = new Response.Listener<JSONObject>() {
             @Override
@@ -398,23 +332,14 @@ public class RegisterTIFragment extends DialogFragment {
                     if(response.has("ti_id") && !response.isNull("ti_id")){
                         ti.setId(response.getLong("ti_id"));
                         dataSource.inserirTI(ti, atv.getId());
-                        /*String dataPersistido = response.getString("data_created");
-                        DataSource.getInstance(getContext())
-                                .setDataSincronizacaoAtividade(atv.getId(), dataPersistido);
-
-                        Log.d(TAG, "" + DataSource.getInstance(getContext())
-                                .getDataSincronizacaoAtividade(atv.getId()));*/
-
-                        //inserirTI(atv, ti);
                     } else {
                         Log.w(TAG, "A resposta veio sem data");
                     }
-
+                    homeFragment.refresh();
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e(TAG, "Erro ao converter dados");
                 }
-                //requestQueue.add(getTIRequest);
             }
         };
 

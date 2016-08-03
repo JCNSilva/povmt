@@ -69,7 +69,6 @@ import les.ufcg.edu.br.povmt.utils.IonResume;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.OnConnectionFailedListener, IonResume {
 
-    public static final String TAG = "MAIN";
     public static final String HOME_TAG = "HOME_TAG";
     private static final String HISTORY_TAG = "HISTORY_TAG";
     private static final String ABOUT_TAG = "ABOUT_TAG";
@@ -88,7 +87,6 @@ public class MainActivity extends AppCompatActivity
     private AboutFragment aboutFragment;
     private ConfigurationsFragment configFragment;
     private FloatingActionButton fab;
-    RequestQueue requestQueue;
     private DataSource dataSource;
 
 
@@ -100,7 +98,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         dataSource = DataSource.getInstance(getApplicationContext());
-        requestQueue = DataSource.getInstance(getApplicationContext()).getRequestQueue();
         sharedPreferences = getSharedPreferences(SplashActivity.PREFERENCE_NAME, MODE_PRIVATE);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -144,7 +141,6 @@ public class MainActivity extends AppCompatActivity
         nameUsr = (TextView) headerLayout.findViewById(R.id.nameUsr);
         emailUsr = (TextView) headerLayout.findViewById(R.id.emailUsr);
         imgUsr = (ImageView) headerLayout.findViewById(R.id.imgUsr);
-        getAtividadesUsuario();
 
         setUpViewsDrawer();
 //        setUpFragments();
@@ -376,119 +372,4 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private ArrayList<TI> getTIsUsuario(final long idatividade){
-        final String URL_GET_TIS = "http://lucasmatos.pythonanywhere.com/povmt/tilist/" + idatividade;
-        final ArrayList<TI> listti = new ArrayList<TI>();
-        final Response.ErrorListener genericErrorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                handleVolleyError(error);
-            }
-        };
-
-        final Response.Listener<JSONArray> getTisResponseListener = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                for(int i =0; i < response.length(); i++){
-                    try {
-                        String data = response.getJSONObject(i).getString("data");
-                        int semana = response.getJSONObject(i).getInt("semana");
-                        int horas = response.getJSONObject(i).getInt("horas");
-                        long idti= response.getJSONObject(i).getLong("id");
-                        TI ti  = new TI(idti,data,semana, horas);
-                        listti.add(ti);
-                        if (dataSource.getTI(ti.getId()) == null) {
-                            dataSource.inserirTI(ti, idatividade);
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        };
-
-        final JsonArrayRequest getTisRequest = new JsonArrayRequest(URL_GET_TIS,
-                getTisResponseListener, genericErrorListener);
-
-        requestQueue.add(getTisRequest);
-        return listti;
-    }
-
-    private void getAtividadesUsuario(){
-        final String URL_GET_ATIVIDADES = "http://lucasmatos.pythonanywhere.com/povmt/" + sharedPreferences.getString(SplashActivity.USER_ID, "");
-
-        final Response.ErrorListener genericErrorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                handleVolleyError(error);
-            }
-        };
-
-        final Response.Listener<JSONArray> getAtividadesResponseListener = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                for(int i =0; i < response.length(); i++){
-                    try {
-                        String name = response.getJSONObject(i).getString("nome");
-                        long idatividade= response.getJSONObject(i).getLong("id");
-                        Categoria categoria_db = null;
-                        String categoria = response.getJSONObject(i).getString("categoria");
-                        if(categoria.equals("TRABALHO")) {
-                            categoria_db = Categoria.TRABALHO;
-                        } else if (categoria.equals("LAZER")) {
-                            categoria_db = Categoria.LAZER;
-                        }else{
-                            categoria_db = Categoria.VAZIO;
-                        }
-                        Prioridade prioridade_db = null;
-                        String prioridade = response.getJSONObject(i).getString("prioridade");
-                        if(prioridade.equals("BAIXA")) {
-                            prioridade_db = Prioridade.BAIXA;
-                        } else if (prioridade.equals( "MEDIA")) {
-                            prioridade_db = Prioridade.MEDIA;
-                        } else if (prioridade.equals( "ALTA")) {
-                            prioridade_db = Prioridade.ALTA;
-                        }
-
-                        String foto = response.getJSONObject(i).getString("url_imagem");
-                        Atividade atividade = new Atividade(idatividade, name, categoria_db, prioridade_db, foto);
-                        ArrayList<TI> listati = getTIsUsuario(idatividade);
-                        for (int j= 0; j < listati.size(); j++){
-                            atividade.addTI(listati.get(j));
-                        }
-                        if (dataSource.getAtividade(atividade.getId()) == null) {
-                            dataSource.inserirAtividade(atividade, sharedPreferences.getString(SplashActivity.USER_ID, ""));
-                        }
-
-                        homeFragment.onResume();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            }
-        };
-
-        final JsonArrayRequest getAtividadesRequest = new JsonArrayRequest(URL_GET_ATIVIDADES,
-                getAtividadesResponseListener, genericErrorListener);
-        requestQueue.add(getAtividadesRequest);
-    }
-
-    private void handleVolleyError(VolleyError error) {
-        NetworkResponse response = error.networkResponse;
-        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-            Log.e(TAG, "Sem resposta!");
-        } else if (error instanceof AuthFailureError) {
-            Log.e(TAG, "Erro de autenticacao!");
-        } else if (error instanceof ServerError) {
-            Log.e(TAG, "Erro de servidor!");
-        } else if (error instanceof NetworkError) {
-            Log.e(TAG, "Erro de rede!");
-        } else if (error instanceof ParseError) {
-            Log.e(TAG, "Erro ao converter resposta!");
-        } else {
-            Log.e(TAG, "Erro desconhecido!");
-        }
-    }
 }
