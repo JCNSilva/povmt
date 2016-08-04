@@ -1,9 +1,15 @@
 package les.ufcg.edu.br.povmt.activities;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -148,6 +154,7 @@ public class SplashActivity extends AppCompatActivity implements
 
         } else {
             goToMainPage(false);
+            showEneableMessageIfNeeded();
         }
     }
 
@@ -302,4 +309,52 @@ public class SplashActivity extends AppCompatActivity implements
         }
     }
 
+    /** Method to show message internet if  is disabled
+     */
+    public void showEneableMessageIfNeeded() {
+        if (!isNetworkAvailable()) {
+            displayPromptForEnablingInternet();
+        }
+    }
+
+    /** Method that checks if network is available
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    /** Method to display Prompt for enabling internet
+     */
+    private void displayPromptForEnablingInternet() {
+        final AlertDialog.Builder builder =
+                new AlertDialog.Builder(SplashActivity.this);
+        final String actionWifiSettings = Settings.ACTION_WIFI_SETTINGS;
+        final String actionWirelessSettings = Settings.ACTION_WIRELESS_SETTINGS;
+        final String message = getString(R.string.enable_network);
+
+        builder.setMessage(message)
+                .setPositiveButton(getString(R.string.bt_wifi),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int idButton) {
+                                SplashActivity.this.startActivity(new Intent(actionWifiSettings));
+                                dialog.dismiss();
+                            }
+                        })
+                .setNegativeButton(getString(R.string.bt_mobile_network),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int idButton) {
+                                SplashActivity.this.startActivity(new Intent(actionWirelessSettings));
+                                dialog.dismiss();
+                            }
+                        })
+                .setNeutralButton(getString(R.string.bt_cancel),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int idButton) {
+                                dialog.cancel();
+                            }
+                        });
+        builder.create().show();
+    }
 }
