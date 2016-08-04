@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -64,7 +65,7 @@ public class HomeFragment extends Fragment implements IonResume {
     private ArrayList atividades;
     private RecyclerView listaAtividades;
     private TextView listaVazia;
-    private LinearLayout campoAtividades;
+    private CardView campoAtividades;
     private TextView horasInvestidas;
     public static AtividadeAdapter adapter;
     private SharedPreferences sharedPreferences;
@@ -83,7 +84,7 @@ public class HomeFragment extends Fragment implements IonResume {
 //        atividadePersister = new AtividadePersister(getContext());
 //        atividades = (ArrayList) atividadePersister.getAtividades(idUser);
         listaAtividades = (RecyclerView) view.findViewById(R.id.rview_atividades);
-        campoAtividades = (LinearLayout) view.findViewById(R.id.ll_atividades);
+        campoAtividades = (CardView) view.findViewById(R.id.ll_atividades);
         listaVazia = (TextView) view.findViewById(R.id.sem_ti);
         horasInvestidas = (TextView) view.findViewById(R.id.tv_horasinv_semana);
         requestQueue = DataSource.getInstance(getActivity().getApplicationContext()).getRequestQueue();

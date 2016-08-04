@@ -2,10 +2,16 @@ package les.ufcg.edu.br.povmt.fragments;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -157,12 +163,17 @@ public class RegisterTIFragment extends DialogFragment {
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try{
-                    prepareData();
-                    homeFragment.refresh();
-                    dismiss();
-                }catch(InputException e){
-                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+//                showEneableMessageIfNeeded();
+                if (!isNetworkAvailable()) {
+                    displayPromptForEnablingInternet();
+                } else {
+                    try{
+                        prepareData();
+                        homeFragment.refresh();
+                        dismiss();
+                    }catch(InputException e){
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
 
             }
@@ -442,5 +453,52 @@ public class RegisterTIFragment extends DialogFragment {
 //        }
 
         return data_completa;
+    }
+
+    /** Method to show message internet if  is disabled
+     */
+    public void showEneableMessageIfNeeded() {
+        if (!isNetworkAvailable()) {
+            displayPromptForEnablingInternet();
+        }
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    /** Method to show the display to enabling internet
+     */
+    private void displayPromptForEnablingInternet() {
+        final AlertDialog.Builder builder =
+                new AlertDialog.Builder(getActivity());
+        final String actionWifiSettings = Settings.ACTION_WIFI_SETTINGS;
+        final String actionWirelessSettings = Settings.ACTION_WIRELESS_SETTINGS;
+        final String message = getString(R.string.enable_network);
+
+        builder.setMessage(message)
+                .setPositiveButton(getString(R.string.bt_wifi),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int idButton) {
+                                getActivity().startActivity(new Intent(actionWifiSettings));
+                                dialog.dismiss();
+                            }
+                        })
+                .setNegativeButton(getString(R.string.bt_mobile_network),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int idButton) {
+                                getActivity().startActivity(new Intent(actionWirelessSettings));
+                                dialog.dismiss();
+                            }
+                        })
+                .setNeutralButton(getString(R.string.bt_cancel),
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int idButton) {
+                                dialog.cancel();
+                            }
+                        });
+        builder.create().show();
     }
 }

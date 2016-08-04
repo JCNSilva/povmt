@@ -30,4 +30,8 @@
     <string name="horas_investidas">Horas investidas nessa semana</string>
     <string name="propor_o">Proporção</string>
     <string name="textConfig">textConfig</string>
+    <string name="enable_network">Ative a conexão com Internet para usar esse recurso. Clique Wifi para abrir as configurações Wi-Fi ou serviços de rede móvel para permitir a sua rede de dados</string>
+    <string name="bt_wifi">Wi-Fi</string>
+    <string name="bt_mobile_network">Rede móvel</string>
+    <string name="bt_cancel">Cancelar</string>
 </resources>
